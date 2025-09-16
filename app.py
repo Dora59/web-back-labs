@@ -11,7 +11,10 @@ def web():
                <a href="/author">author</a>
                <a href="/image">oak</a>
            </body> 
-        </html>'''
+        </html>''', 200, {
+            "X-Server": "sample",
+            'Content-Type': 'text/plai; charset=utf-8'
+        }
 
 @app.route("/author")
 def author():  
@@ -85,3 +88,4 @@ def created():
 @app.errorhandler(404)
 def not_found(err):
     return "Нет такой страницы", 404 
+
