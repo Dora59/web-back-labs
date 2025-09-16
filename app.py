@@ -35,6 +35,7 @@ def author():
 @app.route('/image')
 def image():
     path = url_for("static", filename="oak.jpeg")
+    css_url = url_for("static", filename = "lab1.css")
     return '''
 <!doctype html>
 <html>
