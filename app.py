@@ -32,16 +32,18 @@ def author():
             </body>
         </html>"""
 
-@app.route('/image')
+@app.route('/lab1/image')
 def image():
     path = url_for("static", filename="oak.jpeg")
     css_url = url_for("static", filename = "lab1.css")
     return '''
 <!doctype html>
 <html>
+    <head>
+        <link rel="stylesheet" href="''' + css_url + '''">
+    </head>
     <body>
         <h1>Дуб</h1>
-        <a href="/web">web</a>
         <img src="''' + path + '''">
     </body>
 </html>
@@ -63,12 +65,20 @@ def counter():
     <body>
         Сколько раз вы посещали данную страницу: ''' + str (count) + '''
         <hr>
+        <a href="/counter/clear">Очистить счетчик</a>
+        <hr>
         Дата и время: ''' + str (time) + ''' <br>
         Запрошенный адрес: ''' + str (url) + ''' <br>
         Ваш IP-адрес: ''' + str (client_ip) + ''' <br>
     </body>
 </html>
 '''  
+@app.route('/counter/clear')
+def clear_counter():
+    global count
+    count = 0
+    return redirect('/counter')
+
 
 @app.route("/info")
 def info():
