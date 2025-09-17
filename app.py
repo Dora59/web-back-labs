@@ -43,9 +43,21 @@ def lab1():
         использующий набор инструментов Werkzeug, а также шаблонизатор Jinja2. Относится 
         к категории так называемых микрофреймворков — минималистичных каркасов веб-приложений, 
         сознательно предоставляющих лишь самые базовые возможности.</p>
-        
-        <h2>HTTP коды ответов:</h2>
+
+        <a href="/">На главную</a>
+
+        <h2>Список роутов</h2>
         <ul>
+            <li><a href="/">Главная страница</a></li>
+            <li><a href="/index">Index (дублирует главную)</a></li>
+            <li><a href="/lab1">Лабораторная работа 1</a></li>
+            <li><a href="/lab1/web">Web-сервер на Flask</a></li>
+            <li><a href="/lab1/author">Информация об авторе</a></li>
+            <li><a href="/lab1/image">Изображение дуба</a></li>
+            <li><a href="/lab1/counter">Счетчик посещений</a></li>
+            <li><a href="/lab1/counter/clear">Очистка счетчика</a></li>
+            <li><a href="/lab1/info">Редирект на автора</a></li>
+            <li><a href="/lab1/created">Создано успешно (201)</a></li>
             <li><a href="/bad_request">400 Bad Request</a></li>
             <li><a href="/unauthorized">401 Unauthorized</a></li>
             <li><a href="/payment_required">402 Payment Required</a></li>
@@ -54,8 +66,6 @@ def lab1():
             <li><a href="/teapot">418 I'm a teapot</a></li>
             <li><a href="/server_error">500 Internal Server Error</a></li>
         </ul>
-
-        <a href="/">На главную</a>
     </body>
 </html>'''
 
