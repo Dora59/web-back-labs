@@ -52,6 +52,7 @@ def lab1():
             <li><a href="/forbidden">403 Forbidden</a></li>
             <li><a href="/method_not_allowed">405 Method Not Allowed</a></li>
             <li><a href="/teapot">418 I'm a teapot</a></li>
+            <li><a href="/server_error">500 Internal Server Error</a></li>
         </ul>
 
         <a href="/">На главную</a>
@@ -279,3 +280,48 @@ def teapot():
     </body>
 </html>
 ''', 418
+
+# Обработчик, который вызывает ошибку сервера (500)
+@app.route('/server_error')
+def server_error():
+    result = 10 / 0
+    return 
+
+# Перехватчик ошибки 500 
+@app.errorhandler(500)
+def internal_server_error(err):
+    css_url = url_for("static", filename="lab1.css")
+    
+    return '''
+<!doctype html>
+<html>
+    <head>
+        <title>500 - Ошибка сервера</title>
+        <link rel="stylesheet" href="''' + css_url + '''">
+    </head>
+    <body class="error-page">
+        <h1 class="error-code">500</h1>
+        <h2 class="error-title">Внутренняя ошибка сервера</h2>
+        
+        <div style="background: white; color: #333; padding: 20px; border-radius: 10px; max-width: 600px; margin: 20px;">
+            <h3>Что случилось?</h3>
+            <p>На сервере произошла непредвиденная ошибка. Мы уже работаем над исправлением.</p>
+            
+            <h3>Что можно сделать?</h3>
+            <ul>
+                <li>Попробуйте обновить страницу</li>
+                <li>Вернитесь на главную страницу</li>
+                <li>Если ошибка повторяется, сообщите администратору</li>
+            </ul>
+        </div>
+        
+        <div class="error-buttons">
+            <a href="/" class="error-button">На главную</a>
+        </div>
+        
+        <div style="margin-top: 30px; color: rgba(255,255,255,0.8);">
+            <p>Пятина Дарья Вадимовна, ФБИ-31</p>
+        </div>
+    </body>
+</html>
+''', 500
