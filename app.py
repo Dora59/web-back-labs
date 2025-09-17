@@ -44,6 +44,16 @@ def lab1():
         к категории так называемых микрофреймворков — минималистичных каркасов веб-приложений, 
         сознательно предоставляющих лишь самые базовые возможности.</p>
         
+        <h2>HTTP коды ответов:</h2>
+        <ul>
+            <li><a href="/bad_request">400 Bad Request</a></li>
+            <li><a href="/unauthorized">401 Unauthorized</a></li>
+            <li><a href="/payment_required">402 Payment Required</a></li>
+            <li><a href="/forbidden">403 Forbidden</a></li>
+            <li><a href="/method_not_allowed">405 Method Not Allowed</a></li>
+            <li><a href="/teapot">418 I'm a teapot</a></li>
+        </ul>
+
         <a href="/">На главную</a>
     </body>
 </html>'''
@@ -148,3 +158,99 @@ def created():
 def not_found(err):
     return "Нет такой страницы", 404 
 
+# Коды ответов HTTP
+@app.route('/bad_request')
+def bad_request():
+    return '''
+<!doctype html>
+<html>
+    <head>
+        <title>400 Bad Request</title>
+    </head>
+    <body>
+        <h1>400 Bad Request</h1>
+        <p>Сервер не может обработать запрос из-за неверного синтаксиса.</p>
+        <a href="/">На главную</a>
+    </body>
+</html>
+''', 400
+
+@app.route('/unauthorized')
+def unauthorized():
+    return '''
+<!doctype html>
+<html>
+    <head>
+        <title>401 Unauthorized</title>
+    </head>
+    <body>
+        <h1>401 Unauthorized</h1>
+        <p>Для доступа к запрашиваемому ресурсу требуется аутентификация.</p>
+        <a href="/">На главную</a>
+    </body>
+</html>
+''', 401
+
+@app.route('/payment_required')
+def payment_required():
+    return '''
+<!doctype html>
+<html>
+    <head>
+        <title>402 Payment Required</title>
+    </head>
+    <body>
+        <h1>402 Payment Required</h1>
+        <p>Запрос не может быть обработан до осуществления оплаты.</p>
+        <a href="/">На главную</a>
+    </body>
+</html>
+''', 402
+
+@app.route('/forbidden')
+def forbidden():
+    return '''
+<!doctype html>
+<html>
+    <head>
+        <title>403 Forbidden</title>
+    </head>
+    <body>
+        <h1>403 Forbidden</h1>
+        <p>Доступ к запрашиваемому ресурсу запрещен.</p>
+        <a href="/">На главную</a>
+    </body>
+</html>
+''', 403
+
+@app.route('/method_not_allowed')
+def method_not_allowed():
+    return '''
+<!doctype html>
+<html>
+    <head>
+        <title>405 Method Not Allowed</title>
+    </head>
+    <body>
+        <h1>405 Method Not Allowed</h1>
+        <p>Метод запроса известен серверу, но не поддерживается для целевого ресурса.</p>
+        <a href="/">На главную</a>
+    </body>
+</html>
+''', 405
+
+@app.route('/teapot')
+def teapot():
+    return '''
+<!doctype html>
+<html>
+    <head>
+        <title>418 I'm a teapot</title>
+    </head>
+    <body>
+        <h1>418 I'm a teapot</h1>
+        <p>Я чайник!</p>
+        <a href="/">На главную</a>
+    </body>
+</html>
+''', 418
