@@ -156,7 +156,32 @@ def created():
 
 @app.errorhandler(404)
 def not_found(err):
-    return "Нет такой страницы", 404 
+    css_url = url_for("static", filename="lab1.css")
+    image_url = url_for("static", filename="404.jpg")
+    return '''
+<!doctype html>
+<html>
+    <head>
+        <title>404 - Страница не найдена</title>
+        <link rel="stylesheet" href="''' + css_url + '''">
+    </head>
+    <body>
+        <div style="text-align: center; padding: 50px;">
+            <h1 style="color: #e74c3c; font-size: 48px;">404</h1>
+            <h2>Ой! Страница потерялась</h2>
+            
+            <img src="''' + image_url+ '''">  
+            
+            <p>К сожалению, страница которую вы ищете, не существует.</p>
+            <p>Возможно, она была перемещена или удалена.</p>
+            
+            <div>
+                <a href="/">На главную</a>
+            </div>
+        </div>
+    </body>
+</html>
+''', 404
 
 # Коды ответов HTTP
 @app.route('/bad_request')
