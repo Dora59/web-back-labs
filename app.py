@@ -71,7 +71,7 @@ def web():
            </body> 
         </html>''', 200, {
             "X-Server": "sample",
-            'Content-Type': 'text/plai; charset=utf-8'
+            'Content-Type': 'text/plain; charset=utf-8'
         }
 
 @app.route("/lab1/author")
@@ -93,7 +93,8 @@ def author():
 @app.route('/lab1/image')
 def image():
     path = url_for("static", filename="oak.jpeg")
-    css_url = url_for("static", filename = "lab1.css")
+    css_url = url_for("static", filename="lab1.css")
+    
     return '''
 <!doctype html>
 <html>
@@ -106,7 +107,14 @@ def image():
         <img src="''' + path + '''">
     </body>
 </html>
-'''  
+''', 200, {
+    'Content-Language': 'ru-RU',  
+    'X-Developer-Name': 'Пятина Дарья Вадимовна',
+    'X-Student-Group': 'ФБИ-31', 
+    'X-Custom-Header': 'Лабораторная работа по веб-программированию',
+    'X-University': 'НГТУ',  
+    'X-Academic-Year': '2024-2025'  
+}
 
 count = 0
 
