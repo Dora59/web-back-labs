@@ -3,12 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Пятина Дарья. Лабораторная работа 2</title>
+    <title>
+        {% if name %}
+            {{ name }}. Лабораторная работа 2
+        {% else %}
+            автор - ?. Лабораторная 2
+        {% endif %}
+    </title>
     <link rel="stylesheet" href="{{ url_for('static', filename='lab1.css') }}">
 </head>
 <body>
     <header>
-        WEB-программирование, часть {{number}}. Лабораторная работа {{number}}
+       WEB-программирование, часть 2. {% if lab_num %}Лабораторная работа 2{% endif %}
     </header>
 
     <main>
@@ -19,7 +25,25 @@
     </main>
 
     <footer>
-        &copy; {{name}}, ФБИ-{{group}}, {{course}} курс, 2023
+        &copy; 
+        {% if name %}
+            {{name}}, 
+        {% else %}
+            Анонимус,
+        {% endif %}
+
+        {% if group %}
+            ФБИ-{{group}},
+        {% else %}
+            ФБИ-??,
+        {% endif %}
+
+        {% if course %}
+            {{course}} курс,
+        {% else %}
+            Курс неизвестен 
+        {% endif %}
+        2023
     </footer>
 </body>
 </html>
