@@ -423,3 +423,47 @@ def lab2():
 def filters():
     phrases = "<b>Нам</b> <u>дворцов</u> <i>заманчивые</i> своды..."
     return render_template('filter.html', phrases = phrases)
+
+
+#Пересылка с /lab2/calc/ на /lab2/calc/1/1
+@app.route('/lab2/calc/')
+def calc_default():
+    return redirect(url_for('calc', a=1, b=1))
+
+# Пересылка с /lab2/calc/<int:a> на /lab2/calc/<int:a>/1
+@app.route('/lab2/calc/<int:a>')
+def calc_single(a):
+    return redirect(url_for('calc', a=a, b=1))
+
+@app.route('/lab2/calc/<int:a>/<int:b>')
+def calc(a, b):
+    # Выполняем математические операции
+    sum_result = a + b
+    sub_result = a - b
+    mul_result = a * b
+    
+    # Обрабатываем деление с проверкой на ноль
+    if b != 0:
+        div_result = a / b
+        div_display = f'{a} / {b} = {div_result}'
+    else:
+        div_display = f'{a} / {b} = ошибка (деление на ноль)'
+    
+    pow_result = a ** b
+    
+    return f'''
+<!doctype html>
+<html>
+    <head>
+        <title>Калькулятор</title>
+    </head>
+    <body>
+        <h2>Расчёт с параметрами:</h2>
+        <p>{a} + {b} = {sum_result}</p>
+        <p>{a} - {b} = {sub_result}</p>
+        <p>{a} × {b} = {mul_result}</p>
+        <p>{div_display}</p>
+        <p>{a}^{b} = {pow_result}</p>
+    </body>
+</html>
+'''
