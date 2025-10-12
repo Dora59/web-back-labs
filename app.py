@@ -393,3 +393,8 @@ def example():
 @app.route('/lab2/')
 def lab2():
     return render_template('lab2.html')
+
+@app.route('/lab2/filters')
+def filters():
+    phrases = "<b>Нам</b> <u>дворцов</u> <i>заманчивые</i> своды..."
+    return render_template('filter.html', phrases = phrases)
