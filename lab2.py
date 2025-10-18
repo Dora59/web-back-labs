@@ -1,6 +1,6 @@
 from flask import Blueprint, abort, url_for, redirect, request, render_template
 import datetime 
-lab2= Blueprint('lab2',__name__)
+lab2= Blueprint('lab2',__name__, template_folder='templates/lab2')
 
 @lab2.route('/lab2/a')
 def a():
@@ -21,7 +21,7 @@ flower_list = [
 
 @lab2.route('/lab2/flowers/')
 def all_flowers():
-    return render_template('flower.html', flowers=flower_list)
+    return render_template('lab2/flower.html', flowers=flower_list)
 
 
 @lab2.route('/lab2/flowers/<int:flower_id>')
