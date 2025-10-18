@@ -1,15 +1,16 @@
-from flask import Blueprint, url_for, redirect, request, abort, render_template
+from flask import Blueprint, abort, url_for, redirect, request, render_template
 import datetime 
 lab2= Blueprint('lab2',__name__)
-
 
 @lab2.route('/lab2/a')
 def a():
     return 'без слэша'
 
+
 @lab2.route('/lab2/a/')
 def a2():
     return 'со слэшем'
+
 
 flower_list = [
     {'name': 'Роза', 'price': 300}, 
@@ -203,6 +204,7 @@ books = [
     }
 ]
 
+
 @lab2.route('/lab2/books/')
 def show_books():
     return render_template('books.html', books=books)
@@ -332,7 +334,7 @@ cities = [
 
 
 @lab2.route('/lab2/cities/')
-def show_cities(): 
+def show_cities():
     html = '<h1>Города России</h1>'
 
     for city in cities:
