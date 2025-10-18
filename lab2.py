@@ -44,14 +44,14 @@ def add_flower(name=None):
         if request.method == 'POST':
             name = request.form.get('name')
             if name:
-                flower_list.lab2end({'name': name, 'price': 300})
+                flower_list.append({'name': name, 'price': 300})
                 return redirect('/lab2/flowers/')
             else:
                 abort(400, "Вы не задали имя цветка")
         else:
             abort(400, "Вы не задали имя цветка")
     else:
-        flower_list.lab2end({'name': name, 'price': 300})
+        flower_list.append({'name': name, 'price': 300})
         return redirect('/lab2/flowers/')
 
 
@@ -98,13 +98,13 @@ def filters():
 #Пересылка с /lab2/calc/ на /lab2/calc/1/1
 @lab2.route('/lab2/calc/')
 def calc_default():
-    return redirect(url_for('calc', a=1, b=1))
+    return redirect(url_for('lab2.calc', a=1, b=1))
 
 
 # Пересылка с /lab2/calc/<int:a> на /lab2/calc/<int:a>/1
 @lab2.route('/lab2/calc/<int:a>')
 def calc_single(a):
-    return redirect(url_for('calc', a=a, b=1))
+    return redirect(url_for('lab2.calc', a=a, b=1))
 
 
 @lab2.route('/lab2/calc/<int:a>/<int:b>')
