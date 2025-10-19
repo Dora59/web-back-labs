@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 3{% endblock %}
+
+{% block main %}
+    <style>
+        .payment-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .buttons {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            padding: 10px;
+        }
+    </style>
+    <div class="payment-container"></div>
+        <h1>Оплата вашего заказа</h1>
+
+        <div>
+            Сумма к оплате составляет {{ price }} рублей.
+        </div>
+
+        <form action="/lab3/success" method="POST">
+            <input type="hidden" name="price" value="{{ price }}">
+
+            <div>Номер банковской карты:</div>
+            <label>
+                <input type="text" name="card" pattern="\d{16}">
+            </label>
+
+            <div>Имя держателя карты:</div>
+            <label>
+                <input type="text" name="name">
+            </label>
+
+            <div>Номер CVV:</div>
+            <label>
+                <input type="text" name="cvv" size="3" pattern="\d{3}">
+            </label>
+
+            <div class="buttons">
+                <button type="submit">Подтвердить оплату</button>
+                <a href="/lab3/order">Отменить оплату</a>
+            </div>
+        </form>
+{% endblock %}
