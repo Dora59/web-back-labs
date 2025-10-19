@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 3{% endblock %}
+
+{% block main %}
+    <style>
+        .success-message {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-size: 20px;
+        }
+    </style>
+    <h1>Оплата прошла успешно!</h1>
+    
+    <div class="success-message">
+        <p>Спасибо, ваш заказ оплачен на сумму {{ price }} рублей, ожидайте доставку.</p>
+    </div>
+
+    <div>
+        <a href="/lab3/order">Вернуться к форме заказа</a>
+    </div>
+{% endblock %}
