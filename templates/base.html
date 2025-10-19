@@ -6,7 +6,15 @@
     <title>Пятина Дарья. {% block lab %}{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='lab1.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='favicon-16x16.png') }}" type="image/x-icon">
-</head>
+   <style>
+      .error {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+   </style>
+   </head>
 <body>
     <header>
          WEB-программирование, часть 2. {{ self.lab() }}
