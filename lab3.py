@@ -25,6 +25,7 @@ def del_cookie():
     resp.delete_cookie('name_color')
     return resp
 
+
 @lab3.route('/lab3/form1')
 def form1():
     errors={}
@@ -39,9 +40,11 @@ def form1():
     sex = request.args.get('sex')
     return render_template('lab3/form1.html', user=user, age=age, sex=sex, errors=errors)
 
+
 @lab3.route('/lab3/order')
 def order():
     return render_template('lab3/order.html')
+
 
 @lab3.route('/lab3/pay')
 def pay():
@@ -63,7 +66,30 @@ def pay():
 
     return render_template('lab3/pay.html', price=price)
 
+
 @lab3.route('/lab3/success', methods=['POST'])
 def success():
     price = request.form.get('price')
     return render_template('lab3/success.html', price=price)
+
+@lab3.route('/lab3/settings')
+def settings():
+    color = request.args.get('color')
+    background = request.args.get('background')
+    font_size = request.args.get('font_size')
+
+    if color or background or font_size:
+        resp = make_response(redirect('/lab3/settings'))
+        if color:
+            resp.set_cookie('color', color)
+        if background:
+            resp.set_cookie('background', background)
+        if font_size:
+            resp.set_cookie('font_size', font_size)
+        return resp
+
+    color = request.cookies.get('color')
+    background = request.cookies.get('background')
+    font_size = request.cookies.get('font_size')
+    resp = make_response(render_template('lab3/settings.html', color=color, background=background, font_size=font_size))
+    return resp
