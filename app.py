@@ -52,8 +52,8 @@ def index():
 
 @app.errorhandler(404)
 def not_found(err):
-    css_url = url_for("static", filename="static\static\lab1\lab1.css")
-    image_url = url_for("static", filename="static\static\lab1\404.jpg")
+    css_url = url_for("static", filename="lab1/lab1.css")
+    image_url = url_for("static", filename="lab1/404.jpg")
     return '''
 <!doctype html>
 <html>
