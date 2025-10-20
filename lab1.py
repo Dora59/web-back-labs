@@ -78,8 +78,8 @@ def author():
 
 @lab1.route('/lab1/image')
 def image():
-    path = url_for("static", filename="oak.jpeg")
-    css_url = url_for("static", filename="lab1.css")
+    path = url_for("static", filename="static\static\lab1\oak.jpeg")
+    css_url = url_for("static", filename="static\static\lab1\lab1.css")
     
     return '''
 <!doctype html>
