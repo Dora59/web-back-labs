@@ -213,121 +213,121 @@ def show_books():
 cities = [
     {
         'name': 'Москва',
-        'image': 'city1.jpg',
+        'image': 'lab2/city1.jpg',
         'description': 'Первый по размерам город РФ.'
     },
 
     {
         'name': 'Краснодар',
-        'image': 'city2.jpg',
+        'image': 'lab2/city2.jpg',
         'description': 'Краснодар — южная столица РФ.'
     },
 
     {
         'name': 'Калининград',
-        'image': 'city3.jpeg',
+        'image': 'lab2/city3.jpeg',
         'description': 'Самый западный город РФ.'
     },
 
     {
         'name': 'Санкт-Петербург',
-        'image': 'city4.jpg',
+        'image': 'lab2/city4.jpg',
         'description': 'Величественный, очаровательный, мистический Питер давно стал меккой творческих людей.'
     },
 
     {
         'name': 'Тюмень',
-        'image': 'city5.jpg',
+        'image': 'lab2/city5.jpg',
         'description': 'С 2015 года Тюмень занимает лидирующие позиции в рейтингах качества дорожного полотна.'
     },
 
     {
         'name': 'Сочи',
-        'image': 'city6.jpg',
+        'image': 'lab2/city6.jpg',
         'description': 'Город-мечта для многих жителей северных регионов.'
     },
 
     {
         'name': 'Нижний Новгород',
-        'image': 'city7.jpg',
+        'image': 'lab2/city7.jpg',
         'description': 'Город, который целиком входит во Всемирное наследие ЮНЕСКО. '
     },
 
     {
         'name': 'Казань',
-        'image': 'city8.jpeg',
+        'image': 'lab2/city8.jpeg',
         'description': 'Жемчужина среди российских центров туризма'
     },
 
     {
         'name': 'Екатеринбург',
-        'image': 'city9.jpg',
+        'image': 'lab2/city9.jpg',
         'description': 'Зима в Екатеринбурге снежная, морозная и долгая, лето редко бывает жарким.'
     },
 
     {
         'name': 'Новосибирск',
-        'image': 'city10.jpg',
+        'image': 'lab2/city10.jpg',
         'description': 'Новосибирск — третий по численности населения город России и крупнейший мегаполис Сибири.'
     },
 
     {
         'name': 'Калуга',
-        'image': 'city11.jpg',
+        'image': 'lab2/city11.jpg',
         'description': 'Здесь ярко выражены все 4 времени года, и можно насладиться преимуществами каждого из них.'
     },
 
     {
         'name': 'Набережные Челны',
-        'image': 'city12.jpg',
+        'image': 'lab2/city12.jpg',
         'description': 'Город в Татарстане на берегу реки Кама.'
     },
 
     {
         'name': 'Уфа',
-        'image': 'city13.jpg',
+        'image': 'lab2/city13.jpg',
         'description': 'Столица Башкирии'
     },
 
     {
         'name': 'Севастополь',
-        'image': 'city14.jpg',
+        'image': 'lab2/city14.jpg',
         'description': ' Расположение на Чёрном море делает город привлекательным для летнего отдыха'
     },
 
     {
         'name': 'Грозный',
-        'image': 'city15.jpg',
+        'image': 'lab2/city15.jpg',
         'description': 'Чтобы жить в Грозном, важно уважать местные традиции и культуру.'
     },
 
     {
         'name': 'Мурманск',
-        'image': 'city16.jpg',
+        'image': 'lab2/city16.jpg',
         'description': 'Восемь месяцев в году здесь можно любоваться северным сиянием.'
     },
 
     {
         'name': 'Владивосток',
-        'image': 'city17.jpg',
+        'image': 'lab2/city17.jpg',
         'description': 'Владивосток — портовый город на берегу Японского моря'
     },
 
     {
         'name': 'Пермь',
-        'image': 'city18.jpg',
+        'image': 'lab2/city18.jpg',
         'description': 'Пермь — крупный промышленный и культурный центр на Урале'
     },
 
     {
         'name': 'Иркутск',
-        'image': 'city19.jpg',
+        'image': 'lab2/city19.jpg',
         'description': 'Иркутск — исторический город в Восточной Сибири'
     },
 
     {
         'name': 'Томск',
-        'image': 'city20.jpg',
+        'image': 'lab2/city20.jpg',
         'description': 'Томск — старейший научный и образовательный центр Сибири'
     }
 ]
