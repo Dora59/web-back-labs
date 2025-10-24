@@ -102,6 +102,14 @@ def settings():
     resp = make_response(render_template('lab3/settings.html', color=color, background=background, font_size=font_size))
     return resp
 
+@lab3.route('/lab3/settings/reset')
+def reset_settings():
+    resp = make_response(redirect('/lab3/settings'))
+    resp.delete_cookie('color')
+    resp.delete_cookie('background')
+    resp.delete_cookie('font_size')
+    return resp
+
 
 @lab3.route('/lab3/ticket')
 def ticket():
