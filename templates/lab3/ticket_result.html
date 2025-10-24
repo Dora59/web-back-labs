@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 3{% endblock %}
+
+{% block main %}
+    <style>
+        .ticket {
+            border: 2px solid #333;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+        }
+        .ticket-header {
+            text-align: center;
+            border-bottom: 1px dashed #333;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .ticket-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .ticket-price {
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px dashed #333;
+        }
+    </style>
+
+    <div class="ticket">
+        <div class="ticket-header">
+            <h1>Железнодорожный билет</h1>
+            <h2>{{ ticket_type }}</h2>
+        </div>
+
+        <div class="ticket-info">
+            <div><strong>ФИО пассажира:</strong></div>
+            <div>{{ fio }}</div>
+
+            <div><strong>Тип полки:</strong></div>
+            <div>
+                {% if shelf == 'lower' %}Нижняя
+                {% elif shelf == 'upper' %}Верхняя
+                {% elif shelf == 'upper-side' %}Верхняя боковая
+                {% elif shelf == 'lower-side' %}Нижняя боковая
+                {% endif %}
+            </div>
+
+            <div><strong>Возраст:</strong></div>
+            <div>{{ age }} лет</div>
+
+            <div><strong>Маршрут:</strong></div>
+            <div>{{ departure }} - {{ destination }}</div>
+
+            <div><strong>Дата поездки:</strong></div>
+            <div>{{ date }}</div>
+
+            <div><strong>Дополнительные услуги:</strong></div>
+            <div>
+                {% if linen == 'on' %}Бельё<br>{% endif %}
+                {% if baggage == 'on' %}Багаж<br>{% endif %}
+                {% if insurance == 'on' %}Страховка{% endif %}
+                {% if linen != 'on' and baggage != 'on' and insurance != 'on' %}Нет дополнительных услуг{% endif %}
+            </div>
+        </div>
+
+        <div class="ticket-price">
+            Стоимость: {{ total_price }} руб.
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="/lab3/ticket">Оформить новый билет</a> 
+        <a href="/lab3/">Вернуться в меню</a>
+    </div>
+{% endblock %}
