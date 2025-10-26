@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 3{% endblock %}
+
+{% block main %}
+    <h1>Поиск автомобилей Mercedes</h1>
+
+    <form>
+        <div>
+            <label>Мин. цена:</label>
+            <input type="number" name="min_price" value="{{ min_price }}" 
+                   placeholder="{{ min_all }}">
+        </div>
+
+        <div>
+            <label>Макс. цена:</label>
+            <input type="number" name="max_price" value="{{ max_price }}" 
+                   placeholder="{{ max_all }}">
+        </div>
+
+        <div>
+            <button type="submit">Искать</button>
+            <button type="submit" name="reset" value="1">Сброс</button>
+        </div>
+    </form>
+
+    <div>Найдено автомобилей: {{ count }}</div>
+
+    {% if count == 0 %}
+        <p>Не найдено ни одного автомобиля</p>
+    {% else %}
+        {% for car in cars %}
+            <div style="border: 1px solid #ccc; padding: 10px; margin: 10px 0;">
+                <h3>{{ car.name }}</h3>
+                <p>Цена: {{ car.price }} руб.</p>
+                <p>Год: {{ car.year }}</p>
+                <p>Цвет: {{ car.color }}</p>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <a href="/lab3/">Назад</a>
+{% endblock %}

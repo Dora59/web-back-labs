@@ -179,4 +179,98 @@ def ticket_result():
                           fio=fio, shelf=shelf, linen=linen, baggage=baggage,
                           age=age, departure=departure, destination=destination,
                           date=date, insurance=insurance,
-                          ticket_type=ticket_type, total_price=total_price) 
+                          ticket_type=ticket_type, total_price=total_price)
+
+
+#доп.задание
+#Список автомобилей Mercedes 
+cars = [
+    {'name': 'Mercedes A-Class', 'price': 2500000, 'year': 2023, 'color': 'белый'},
+    {'name': 'Mercedes C-Class', 'price': 3500000, 'year': 2023, 'color': 'черный'},
+    {'name': 'Mercedes E-Class', 'price': 4500000, 'year': 2023, 'color': 'серый'},
+    {'name': 'Mercedes S-Class', 'price': 8000000, 'year': 2023, 'color': 'синий'},
+    {'name': 'Mercedes GLA', 'price': 2800000, 'year': 2023, 'color': 'красный'},
+    {'name': 'Mercedes GLC', 'price': 4200000, 'year': 2023, 'color': 'зеленый'},
+    {'name': 'Mercedes GLE', 'price': 5500000, 'year': 2023, 'color': 'коричневый'},
+    {'name': 'Mercedes GLS', 'price': 7500000, 'year': 2023, 'color': 'бежевый'},
+    {'name': 'Mercedes CLS', 'price': 5000000, 'year': 2023, 'color': 'фиолетовый'},
+    {'name': 'Mercedes AMG GT', 'price': 12000000, 'year': 2023, 'color': 'желтый'},
+    {'name': 'Mercedes G-Class', 'price': 15000000, 'year': 2023, 'color': 'черный'},
+    {'name': 'Mercedes B-Class', 'price': 2300000, 'year': 2023, 'color': 'оранжевый'},
+    {'name': 'Mercedes V-Class', 'price': 4800000, 'year': 2023, 'color': 'серебристый'},
+    {'name': 'Mercedes SL', 'price': 6800000, 'year': 2023, 'color': 'голубой'},
+    {'name': 'Mercedes CLA', 'price': 3200000, 'year': 2023, 'color': 'бордовый'},
+    {'name': 'Mercedes GLB', 'price': 3100000, 'year': 2023, 'color': 'бирюзовый'},
+    {'name': 'Mercedes EQE', 'price': 5200000, 'year': 2023, 'color': 'синий'},
+    {'name': 'Mercedes EQS', 'price': 9000000, 'year': 2023, 'color': 'черный'},
+    {'name': 'Mercedes AMG C63', 'price': 6500000, 'year': 2023, 'color': 'красный'},
+    {'name': 'Mercedes AMG E53', 'price': 5800000, 'year': 2023, 'color': 'серый'}
+]
+
+@lab3.route('/lab3/cars')
+def cars_search():
+    min_price = request.args.get('min_price')
+    max_price = request.args.get('max_price')
+
+    if min_price is None:
+        min_price = request.cookies.get('min_price', '')
+    if max_price is None:
+        max_price = request.cookies.get('max_price', '')
+
+    if request.args.get('reset'):
+        min_price = ''
+        max_price = ''
+
+    all_prices = [car['price'] for car in cars]
+    min_all = min(all_prices)
+    max_all = max(all_prices)
+
+    filtered_cars = []
+
+    for car in cars:
+        price = car['price']
+        include = True
+
+        if min_price and price < float(min_price):
+            include = False 
+
+        if max_price and price > float(max_price):
+            include = False 
+
+        if min_price and max_price and float(min_price) > float(max_price):
+            #Если пользователь перепутал цены, меняем условие
+            if float(max_price) <= price <= float(min_price):
+                include = True
+            else:
+                include = False
+
+        #Добавляем автомобиль в результат, если он прошел все проверки
+        if include:
+            filtered_cars.append(car)
+
+    if not min_price and not max_price:
+            filtered_cars = cars      
+
+    resp = make_response(render_template('lab3/cars.html',
+                                        cars=filtered_cars,
+                                        min_price=min_price,
+                                        max_price=max_price,
+                                        min_all=min_all,
+                                        max_all=max_all,
+                                        count=len(filtered_cars)))
+    
+    
+    #Работа с куки
+    if request.args.get('reset'):
+            #Удаляем куки при нажатии "Сброс"
+            resp.delete_cookie('min_price')
+            resp.delete_cookie('max_price')
+    else:
+            #Сохраняем значения в куки при поиске
+        if min_price:
+                resp.set_cookie('min_price', min_price)
+        if max_price:
+                resp.set_cookie('max_price', max_price)
+        
+    #Возврат готового ответа
+    return resp       
