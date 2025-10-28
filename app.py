@@ -9,6 +9,7 @@ app = Flask(__name__)
 app.register_blueprint(lab1) 
 app.register_blueprint(lab2_blueprint) 
 app.register_blueprint(lab3)
+app.register_blueprint(lab4)
 
 
 @app.route("/")
