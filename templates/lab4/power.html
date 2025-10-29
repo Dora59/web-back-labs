@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block lab %}Возведение в степень{% endblock %}
+
+{% block main %}
+    {% if error %}
+        {{ error }}
+    {% else %}
+    <h1>Возведение в степень</h1>
+    {{ x1 }}<sup>{{ x2 }}</sup> = {{ result }}
+    {% endif %}
+
+    <p><a href="{{ url_for('lab4.power_form') }}">Вернуться к форме возведения в степень</a></p>
+{% endblock %}
