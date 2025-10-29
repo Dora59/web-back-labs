@@ -209,3 +209,67 @@ def fridge():
         message = f'Установлена температура: {temp}°C'
     
     return render_template('lab4/fridge.html', message=message, snowflakes=snowflakes, temperature=temp)
+
+
+#Заказ зерна
+@lab4.route('/lab4/grain-order', methods=['GET', 'POST'])
+def grain_order():
+    # Цены на зерно
+    prices = {
+        'barley': 12000,  
+        'oats': 8500,     
+        'wheat': 9000,    
+        'rye': 15000     
+    }
+    
+    # Русские названия 
+    grain_names = {
+        'barley': 'ячмень',
+        'oats': 'овёс', 
+        'wheat': 'пшеница',
+        'rye': 'рожь'
+    }
+    
+    if request.method == 'GET':
+        return render_template('lab4/grain_order.html')
+    
+    # Получаем данные из формы
+    grain_type = request.form.get('grain_type')
+    weight = request.form.get('weight')
+    
+    # Проверка на пустой вес
+    if not weight:
+        return render_template('lab4/grain_order.html', error='Ошибка: не указан вес')
+    
+    try:
+        weight = float(weight)
+    except ValueError:
+        return render_template('lab4/grain_order.html', error='Ошибка: вес должен быть числом')
+    
+    # Проверка на отрицательный или нулевой вес
+    if weight <= 0:
+        return render_template('lab4/grain_order.html', error='Ошибка: вес должен быть больше 0')
+    
+    # Проверка на слишком большой объем
+    if weight > 100:
+        return render_template('lab4/grain_order.html', error='Извините, такого объёма сейчас нет в наличии')
+    
+    # Рассчитываем стоимость
+    price_per_ton = prices[grain_type]
+    total = weight * price_per_ton
+    
+    #скидка 10% за объем более 10 тонн
+    discount = 0
+    if weight > 10:
+        discount = total * 0.10
+        total -= discount
+    
+    grain_name = grain_names[grain_type]
+    
+    return render_template('lab4/grain_order.html', 
+                         success=True,
+                         grain_name=grain_name,
+                         weight=weight,
+                         total=total,
+                         discount=discount,
+                         has_discount=weight > 10)
