@@ -3,6 +3,7 @@ from lab1 import lab1
 from lab2 import lab2 as lab2_blueprint 
 from lab3 import lab3 
 from lab4 import lab4
+from lab5 import lab5
 import datetime 
 
 app = Flask(__name__)
@@ -13,6 +14,7 @@ app.register_blueprint(lab1)
 app.register_blueprint(lab2_blueprint) 
 app.register_blueprint(lab3)
 app.register_blueprint(lab4)
+app.register_blueprint(lab5)
 
 
 @app.route("/")
@@ -35,6 +37,7 @@ def index():
                 <li><a href="/lab2/">2 лабораторная работа</a></li>
                 <li><a href="/lab3/">3 лабораторная работа</a></li>
                 <li><a href="/lab4/">4 лабораторная работа</a></li>
+                <li><a href="/lab5/">5 лабораторная работа</a></li>
             </ul>
         </div>
 
