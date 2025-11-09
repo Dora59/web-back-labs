@@ -4,7 +4,7 @@
 
 {% block main %}
     <style>
-        .register-form {
+        .login-form {
             max-width: 400px;
             margin: 0 auto;
             padding: 30px;
@@ -78,10 +78,25 @@
             color: #333;
             margin-bottom: 30px;
         }
+        
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+        
+        .register-link a {
+            color: #f155ca;
+            text-decoration: none;
+        }
+        
+        .register-link a:hover {
+            text-decoration: underline;
+        }
     </style>
 
-    <div class="register-form">
-        <h1>Регистрация</h1>
+    <div class="login-form">
+        <h1>Вход в систему</h1>
 
         {% if error %}
             <div class="error-message">
@@ -89,7 +104,7 @@
             </div>
         {% endif %}
 
-        <form action="/lab5/register" method="post">
+        <form action="/lab5/login" method="post">
             <div class="form-group">
                 <label>
                     Логин:
@@ -103,8 +118,12 @@
                     <input type="password" name="password" class="form-input" placeholder="Введите ваш пароль">
                 </label>
             </div>
-            
-            <button type="submit" class="submit-btn">Зарегистрироваться</button>
+
+            <button type="submit" class="submit-btn">Войти</button>
         </form>
+
+        <div class="register-link">
+            Нет аккаунта? <a href="/lab5/register">Зарегистрироваться</a>
+        </div>
     </div>
 {% endblock %}
