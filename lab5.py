@@ -16,7 +16,7 @@ def db_connect():
         host = '127.0.0.1',
         database = 'darya_pyatina_knowledge_base',
         user = 'darya_pyatina_knowledge_base',
-        password = '777'
+        password = '777',
     )
     cur = conn.cursor(cursor_factory = RealDictCursor)
     return conn, cur
@@ -85,3 +85,27 @@ def login():
     session['login'] = login
     db_close(conn,cur)
     return render_template('/lab5/success_login.html', login=login)
+
+
+@lab5.route('/lab5/create', methods = ['GET', 'POST'])
+def create():
+    login=session.get('login')
+    if not login:
+        return redirect('/lab5/login')
+    
+    if request.method == 'GET':
+        return render_template('lab5/create_article.html')
+    
+    title = request.form.get('title')
+    article_text = request.form.get('article_text')
+
+    conn, cur = db_connect()
+
+    cur.execute("SELECT * FROM users WHERE login=%s;", (login, ))
+    login_id = cur.fetchone() ["id"]
+
+    cur.execute(f"INSERT INTO articles(login_id, title, article_text) \
+                VALUES ('{login_id}', '{title}', '{article_text}');")
+    
+    db_close(conn, cur)
+    return redirect('/lab5')
