@@ -3,22 +3,74 @@
 {% block lab %}Лабораторная работа 5{% endblock %}
 
 {% block main %}
-    <h1>Создание статьи</h1>
+    <style>
+        .create-form {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        
+        textarea {
+            height: 200px;
+            resize: vertical;
+        }
+        
+        button {
+            padding: 10px 25px;
+            background: #f155ca;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background: #e1309b;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
 
-    <form method="post">
-        <div>
-            <label>
-                Название статьи:
-                <input type="text" maxlength="50" name="title">
-            </label>
-        </div>
+    <div class="create-form">
+        <h1>Создание статьи</h1>
 
-        <div>
-            <textarea name="article_text"></textarea>
-        </div>
+        <form method="post">
+            <div class="form-group">
+                <label>Название статьи:</label>
+                <input type="text" maxlength="50" name="title" placeholder="Введите название">
+            </div>
 
-        <div>
-            <button type="submit">Готово</button>
-        </div>
-    </form>
+            <div class="form-group">
+                <label>Текст статьи:</label>
+                <textarea name="article_text" placeholder="Напишите текст статьи..."></textarea>
+            </div>
+
+            <div>
+                <button type="submit">Готово</button>
+            </div>
+        </form>
+    </div>
 {% endblock %}
