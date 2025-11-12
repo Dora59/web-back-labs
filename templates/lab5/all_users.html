@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 5{% endblock %}
+
+{% block main %}
+    <h1>Все пользователи</h1>
+    
+    <table style="width: 100%; border-collapse: collapse;">
+        <tr style="background: #f155ca; color: white;">
+            <th style="padding: 10px; border: 1px solid #ccc;">Логин</th>
+            <th style="padding: 10px; border: 1px solid #ccc;">Имя</th>
+        </tr>
+        {% for user in users %}
+        <tr>
+            <td style="padding: 10px; border: 1px solid #ccc;">{{ user['login'] }}</td>
+            <td style="padding: 10px; border: 1px solid #ccc;">{{ user['real_name'] or 'Не указано' }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
