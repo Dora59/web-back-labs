@@ -36,23 +36,45 @@ function getOfficeList() {
             const bookingButton = document.createElement('button');
             bookingButton.className = 'btn-book';
             bookingButton.innerText = 'Зарезервировать';
-            bookingButton.onclick = function() {booking(office.number)};
+            bookingButton.onclick = function() { booking(office.number, this); };
+            
+            const cancelButton = document.createElement('button');
+            cancelButton.className = 'btn-cancel';
+            cancelButton.innerText = 'Освободить';
+            cancelButton.onclick = function() { cancelBooking(office.number, this); };
+            
+            // Показываем соответствующую кнопку
+            if (office.tenant) {
+                bookingButton.style.display = 'none';
+                cancelButton.style.display = 'inline-block';
+            } else {
+                bookingButton.style.display = 'inline-block';
+                cancelButton.style.display = 'none';
+            }
             
             li.appendChild(officeInfo);
             li.appendChild(bookingButton);
+            li.appendChild(cancelButton);
             ul.appendChild(li);
         }
     });
 }
 
-function booking(officeNumber) {
+function booking(officeNumber, buttonElement) {
     const url = '/lab6/json-rpc-api/';
     const json = {
         'jsonrpc': '2.0',
         'method': 'booking',
-        'params': officeNumber,
+        'params': [officeNumber],
         'id': Math.round(Math.random()*1000)
     };
+    
+    // Блокируем кнопку
+    if (buttonElement) {
+        buttonElement.disabled = true;
+        buttonElement.innerText = 'Бронируем...';
+    }
+    
     fetch(url, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -70,13 +92,81 @@ function booking(officeNumber) {
                 case 2:
                     alert('Офис уже арендуется');   
                     break;
-                case -32601:
-                    alert('Странная ошибка');   
-                    break;
-            }             
+                default:
+                    alert('Ошибка: ' + data.error.message);
+            }
+            // Разблокируем кнопку при ошибке
+            if (buttonElement) {
+                buttonElement.disabled = false;
+                buttonElement.innerText = 'Зарезервировать';
+            }
         }
         else {
             getOfficeList();
+        }
+    })
+    .catch(function(error) {
+        console.error('Ошибка:', error);
+        if (buttonElement) {
+            buttonElement.disabled = false;
+            buttonElement.innerText = 'Зарезервировать';
+        }
+    });
+}
+
+function cancelBooking(officeNumber, buttonElement) {
+    const url = '/lab6/json-rpc-api/';
+    const json = {
+        'jsonrpc': '2.0',
+        'method': 'cancellation',
+        'params': [officeNumber],
+        'id': Math.round(Math.random()*1000)
+    };
+    
+    // Блокируем кнопку
+    if (buttonElement) {
+        buttonElement.disabled = true;
+        buttonElement.innerText = 'Освобождаем...';
+    }
+    
+    fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(json)
+    })
+    .then(function(response) {
+        return response.json();
+    })
+    .then(function(data) {
+        if(data.error) {
+            switch(data.error.code) {
+                case 1:
+                    alert('Вы не авторизованы');
+                    break;
+                case 3:
+                    alert('Офис не арендован');
+                    break;
+                case 4:
+                    alert('Вы можете освобождать только свои офисы');
+                    break;
+                default:
+                    alert('Ошибка: ' + data.error.message);
+            }
+            // Разблокируем кнопку при ошибке
+            if (buttonElement) {
+                buttonElement.disabled = false;
+                buttonElement.innerText = 'Освободить';
+            }
+        } else {
+            // Обновляем список
+            getOfficeList();
+        }
+    })
+    .catch(function(error) {
+        console.error('Ошибка:', error);
+        if (buttonElement) {
+            buttonElement.disabled = false;
+            buttonElement.innerText = 'Освободить';
         }
     });
 }
@@ -129,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     .btn-book {
         padding: 8px 16px;
-        background: #ad0fbe;
+        background: #007bff;
         color: white;
         border: none;
         border-radius: 4px;
@@ -137,7 +227,30 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     .btn-book:hover {
-        background: #e116af;
+        background: #0056b3;
+    }
+    
+    .btn-book:disabled {
+        background: #6c757d;
+        cursor: not-allowed;
+    }
+    
+    .btn-cancel {
+        padding: 8px 16px;
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    .btn-cancel:hover {
+        background: #c82333;
+    }
+    
+    .btn-cancel:disabled {
+        background: #cc1c82;
+        cursor: not-allowed;
     }
     
     .back-btn {
@@ -147,12 +260,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     .btn-back {
         padding: 10px 20px;
-        background: #640982;
+        background: #6c757d;
         color: white;
         border: none;
         border-radius: 4px;
         text-decoration: none;
         display: inline-block;
+    }
+    
+    .btn-back:hover {
+        background: #545b62;
     }
 </style>
 
