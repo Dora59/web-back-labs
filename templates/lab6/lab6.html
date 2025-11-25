@@ -2,5 +2,167 @@
 
 {% block lab %}Лабораторная работа 6{% endblock %}
 
+{% block script %}
+<script>
+function getOfficeList() {
+    const url = '/lab6/json-rpc-api/';
+    const json = {
+        'jsonrpc': '2.0',
+        'method': 'info',
+        'id': Math.round(Math.random()*1000)
+    };
+    fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(json)
+    })
+    .then(function(response) {
+        return response.json()
+    })
+    .then(function(data) {
+        const office_list = data.result;
+        const ul = document.getElementById('office-list');
+        ul.innerHTML = '';
+        
+        for(let i = 0; i < office_list.length; i++) {
+            const office = office_list[i];
+            const li = document.createElement('li');
+            li.className = 'office-item';
+            
+            const officeInfo = document.createElement('span');
+            officeInfo.className = 'office-info';
+            officeInfo.innerText = `Кабинет ${office.number}: ${office.tenant || 'свободен'}`;
+            
+            const bookingButton = document.createElement('button');
+            bookingButton.className = 'btn-book';
+            bookingButton.innerText = 'Зарезервировать';
+            bookingButton.onclick = function() {booking(office.number)};
+            
+            li.appendChild(officeInfo);
+            li.appendChild(bookingButton);
+            ul.appendChild(li);
+        }
+    });
+}
+
+function booking(officeNumber) {
+    const url = '/lab6/json-rpc-api/';
+    const json = {
+        'jsonrpc': '2.0',
+        'method': 'booking',
+        'params': officeNumber,
+        'id': Math.round(Math.random()*1000)
+    };
+    fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(json)
+    })
+    .then(function(response) {
+        return response.json()
+    })
+    .then(function(data) {
+        if(data.error) {
+            switch(data.error.code) {
+                case 1:
+                    alert('Вы не авторизованы, пожалуйста, авторизуйтесь');
+                    break;
+                case 2:
+                    alert('Офис уже арендуется');   
+                    break;
+                case -32601:
+                    alert('Странная ошибка');   
+                    break;
+            }             
+        }
+        else {
+            getOfficeList();
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    getOfficeList();
+});
+</script>
+{% endblock %}
+
 {% block main %}
+<style>
+    .offices-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .offices-list {
+        background: white;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+    
+    .office-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .office-item:last-child {
+        border-bottom: none;
+    }
+    
+    .office-info {
+        font-size: 16px;
+        color: #333;
+    }
+    
+    .btn-book {
+        padding: 8px 16px;
+        background: #ad0fbe;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    .btn-book:hover {
+        background: #e116af;
+    }
+    
+    .back-btn {
+        text-align: center;
+        margin-top: 20px;
+    }
+    
+    .btn-back {
+        padding: 10px 20px;
+        background: #640982;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        text-decoration: none;
+        display: inline-block;
+    }
+</style>
+
+<div class="offices-container">
+    <h1>Список кабинетов</h1>
+    
+    <ul class="offices-list" id="office-list"></ul>
+    
+    <div class="back-btn">
+        <a href="/" class="btn-back">Вернуться на главную</a>
+    </div>
+</div>
 {% endblock %}
