@@ -1,15 +1,18 @@
 from flask import Blueprint, request, render_template, redirect, session, current_app
+import random
 lab6 = Blueprint('lab6', __name__)
 
 offices = []
 for i in range(1, 11):
-    offices.append({"number": i, "tenant": ""})
-
+    offices.append({
+        "number": i, 
+        "tenant": "", 
+        "price": 950 + i % 7 
+    })
 
 @lab6.route('/lab6/')
 def main():
     return render_template('lab6/lab6.html')
-
 
 @lab6.route('/lab6/json-rpc-api/', methods=['POST'])
 def api():
@@ -59,7 +62,6 @@ def api():
         
         for office in offices:
             if office['number'] == office_number:
-                # Проверка: офис должен быть арендован
                 if not office['tenant']:
                     return {
                         'jsonrpc': '2.0',
@@ -70,7 +72,6 @@ def api():
                         'id': id
                     }
                 
-                # Проверка: офис должен быть арендован текущим пользователем
                 if office['tenant'] != login:
                     return {
                         'jsonrpc': '2.0',
@@ -81,8 +82,7 @@ def api():
                         'id': id
                     }
                 
-                # Снимаем аренду
-                office['tenant'] = None
+                office['tenant'] = ""
                 return {
                     'jsonrpc': '2.0',
                     'result': 'success',

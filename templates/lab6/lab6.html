@@ -24,14 +24,22 @@ function getOfficeList() {
         const ul = document.getElementById('office-list');
         ul.innerHTML = '';
         
+        let totalCost = 0;
+        let userBookings = 0;
+        
         for(let i = 0; i < office_list.length; i++) {
             const office = office_list[i];
             const li = document.createElement('li');
             li.className = 'office-item';
             
+            // Добавляем стоимость в информацию об офисе
             const officeInfo = document.createElement('span');
             officeInfo.className = 'office-info';
-            officeInfo.innerText = `Кабинет ${office.number}: ${office.tenant || 'свободен'}`;
+            if (office.tenant) {
+                officeInfo.innerText = `Кабинет ${office.number}: ${office.tenant} - ${office.price} руб./мес`;
+            } else {
+                officeInfo.innerText = `Кабинет ${office.number}: свободен - ${office.price} руб./мес`;
+            }
             
             const bookingButton = document.createElement('button');
             bookingButton.className = 'btn-book';
@@ -47,6 +55,13 @@ function getOfficeList() {
             if (office.tenant) {
                 bookingButton.style.display = 'none';
                 cancelButton.style.display = 'inline-block';
+                
+                //Общая стоимость для текущего пользователя
+                const login = '{{ session.get("login", "") }}'; 
+                if (office.tenant === login) {
+                    totalCost += office.price;
+                    userBookings++;
+                }
             } else {
                 bookingButton.style.display = 'inline-block';
                 cancelButton.style.display = 'none';
@@ -57,7 +72,29 @@ function getOfficeList() {
             li.appendChild(cancelButton);
             ul.appendChild(li);
         }
+        
+        // Обновляем блок с общей стоимостью
+        updateTotalCost(totalCost, userBookings);
     });
+}
+
+function updateTotalCost(totalCost, userBookings) {
+    const totalElement = document.getElementById('total-cost');
+    if (totalCost > 0) {
+        totalElement.innerHTML = `
+            <div class="total-info">
+                <h3>Ваша аренда</h3>
+                <p>Арендовано офисов: <strong>${userBookings}</strong></p>
+                <p>Общая стоимость: <strong class="total-price">${totalCost} руб./мес</strong></p>
+            </div>
+        `;
+    } else {
+        totalElement.innerHTML = `
+            <div class="total-info">
+                <p>У вас нет арендованных офисов</p>
+            </div>
+        `;
+    }
 }
 
 function booking(officeNumber, buttonElement) {
@@ -69,7 +106,6 @@ function booking(officeNumber, buttonElement) {
         'id': Math.round(Math.random()*1000)
     };
     
-    // Блокируем кнопку
     if (buttonElement) {
         buttonElement.disabled = true;
         buttonElement.innerText = 'Бронируем...';
@@ -95,7 +131,6 @@ function booking(officeNumber, buttonElement) {
                 default:
                     alert('Ошибка: ' + data.error.message);
             }
-            // Разблокируем кнопку при ошибке
             if (buttonElement) {
                 buttonElement.disabled = false;
                 buttonElement.innerText = 'Зарезервировать';
@@ -123,7 +158,6 @@ function cancelBooking(officeNumber, buttonElement) {
         'id': Math.round(Math.random()*1000)
     };
     
-    // Блокируем кнопку
     if (buttonElement) {
         buttonElement.disabled = true;
         buttonElement.innerText = 'Освобождаем...';
@@ -152,13 +186,11 @@ function cancelBooking(officeNumber, buttonElement) {
                 default:
                     alert('Ошибка: ' + data.error.message);
             }
-            // Разблокируем кнопку при ошибке
             if (buttonElement) {
                 buttonElement.disabled = false;
                 buttonElement.innerText = 'Освободить';
             }
         } else {
-            // Обновляем список
             getOfficeList();
         }
     })
@@ -180,7 +212,7 @@ document.addEventListener('DOMContentLoaded', function() {
 {% block main %}
 <style>
     .offices-container {
-        max-width: 600px;
+        max-width: 700px;
         margin: 0 auto;
         padding: 20px;
     }
@@ -196,7 +228,7 @@ document.addEventListener('DOMContentLoaded', function() {
         border-radius: 8px;
         border: 1px solid #ddd;
         padding: 0;
-        margin: 0;
+        margin: 0 0 30px 0;
         list-style: none;
     }
     
@@ -215,6 +247,7 @@ document.addEventListener('DOMContentLoaded', function() {
     .office-info {
         font-size: 16px;
         color: #333;
+        flex-grow: 1;
     }
     
     .btn-book {
@@ -224,6 +257,7 @@ document.addEventListener('DOMContentLoaded', function() {
         border: none;
         border-radius: 4px;
         cursor: pointer;
+        margin-left: 10px;
     }
     
     .btn-book:hover {
@@ -242,6 +276,7 @@ document.addEventListener('DOMContentLoaded', function() {
         border: none;
         border-radius: 4px;
         cursor: pointer;
+        margin-left: 10px;
     }
     
     .btn-cancel:hover {
@@ -251,6 +286,24 @@ document.addEventListener('DOMContentLoaded', function() {
     .btn-cancel:disabled {
         background: #cc1c82;
         cursor: not-allowed;
+    }
+    
+    .total-info {
+        background: #f8f9fa;
+        border: 2px solid #007bff;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .total-info h3 {
+        margin-top: 0;
+        color: #007bff;
+    }
+    
+    .total-price {
+        color: #28a745;
+        font-size: 18px;
     }
     
     .back-btn {
@@ -275,6 +328,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <div class="offices-container">
     <h1>Список кабинетов</h1>
+    
+    <div id="total-cost"></div>
     
     <ul class="offices-list" id="office-list"></ul>
     
