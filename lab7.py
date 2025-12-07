@@ -4,7 +4,7 @@ lab7 = Blueprint('lab7', __name__)
 
 @lab7.route('/lab7/')
 def main():
-    return render_template('lab7/index.html')
+    return render_template('lab7/lab7.html')
 
 
 films = [
@@ -88,7 +88,7 @@ def get_film(id):
     if id < 0 or id >= len(films):
         # Если id выходит за пределы, возвращаем ошибку 404
         abort(404, description=f"Фильм с ID {id} не найден")
-    return films[id]
+    return jsonify(films[id])
 
 
 # Обработчик ошибки 404 для API
@@ -98,4 +98,17 @@ def not_found_error(error):
         "error": "Not Found",
         "message": str(error.description)
     }), 404
+
+
+#удаление фильма
+@lab7.route('/lab7/rest-api/films/<int:id>', methods=['DELETE'])
+def del_film(id):
+    #проверка id на принадлежность корректному диапазону
+    if id < 0 or id >= len(films):
+        # Если id выходит за пределы, возвращаем ошибку 404
+        abort(404, description=f"Фильм с ID {id} не найден")
+    del films[id]
+    return '', 204
+
+
 
