@@ -119,8 +119,13 @@ def put_film(id):
         # Если id выходит за пределы, возвращаем ошибку 404
         abort(404, description=f"Фильм с ID {id} не найден")
     film = request.get_json()
+
     if film['description'] == '':
         return {'description': 'Заполните описание'}, 400
+    
+    # Если оригинальное название пустое, а русское есть
+    if film['title'] == '' and film['title_ru'] != '':
+        film['title'] = film['title_ru']
     films[id] = film 
     return films[id]
 
@@ -130,7 +135,11 @@ def put_film(id):
 @lab7.route('/lab7/rest-api/films/', methods=['POST'])
 def add_film():
     film = request.get_json()
+
     if film.get('description') == '':
         return {'description': 'Заполните описание'}, 400
+    
+    if film.get('title') == '' and film.get('title_ru') != '':
+        film['title'] = film['title_ru']
     films.append(film)
     return jsonify(len(films)-1)

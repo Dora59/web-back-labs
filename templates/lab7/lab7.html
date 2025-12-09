@@ -17,9 +17,83 @@
     position: absolute;
     padding: 20px;
 }
-.error-message {
-    color: red;
-}
+/* Таблица */
+    table {
+        border-collapse: collapse;
+        width: 80%;
+        margin: 20px auto; 
+        border: 1px solid #ccc;
+    }
+
+    th, td {
+        background-color: #f2defa;
+        border: 2px solid #ed93f0;
+        padding: 8px;
+        text-align: left;
+    }
+
+    /* Кнопки в таблице */
+    table button {
+        padding: 5px 10px;
+        margin: 2px;
+        cursor: pointer;
+    }
+
+    /* Модальное окно */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 100;
+        box-shadow: 3px 3px 5px rgba(45, 4, 4, 0.3);
+        background: white;
+        width: 400px;
+        left: 50%;
+        top: 220px;
+        margin-left: -200px;
+        padding: 20px;
+        border: 1px solid #ccc;
+    }
+
+    /* Кнопка "Добавить фильм" */
+    button {
+        padding: 8px 16px;
+        background-color: #f639d3;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        margin: 20px 0 20px 172px;
+    }
+
+    /* Поля формы */
+    label {
+        display: block;
+        margin: 10px 0 5px;
+    }
+
+    input, textarea {
+        width: 100%;
+        padding: 5px;
+        margin: 5px 0;
+        box-sizing: border-box;
+    }
+
+    textarea {
+        height: 100px;
+        resize: vertical;
+    }
+
+    /* Кнопки в модальном окне */
+    .modal button {
+        margin: 5px;
+    }
+
+    /* Сообщение об ошибке */
+    .error-message {
+        color: red;
+        font-size: 16px;
+        margin-top: 5px;
+    }
 </style>
 {% endblock %}
 
