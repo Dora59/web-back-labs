@@ -59,6 +59,12 @@ function editFilm(id) {
         document.getElementById('title-ru').value = film.title_ru;
         document.getElementById('year').value = film.year;
         document.getElementById('description').value = film.description;
+
+        // Очищаем ошибки
+        document.getElementById('title-error').textContent = '';
+        document.getElementById('title-ru-error').textContent = '';
+        document.getElementById('year-error').textContent = '';
+        document.getElementById('description-error').textContent = '';
         showModal();
     });
 }
@@ -95,6 +101,12 @@ function addFilm() {
     document.getElementById('title-ru').value = '';
     document.getElementById('year').value = '';
     document.getElementById('description').value = '';
+
+    // Очищаем ошибки
+    document.getElementById('title-error').textContent = '';
+    document.getElementById('title-ru-error').textContent = '';
+    document.getElementById('year-error').textContent = '';
+    document.getElementById('description-error').textContent = '';
     showModal();
 }
 
@@ -104,7 +116,7 @@ function sendFilm() {
     const film = {
         title: document.getElementById('title').value,
         title_ru: document.getElementById('title-ru').value,
-        year: document.getElementById('year').value,
+        year: parseInt(document.getElementById('year').value) || 0,
         description: document.getElementById('description').value,
     }
 
@@ -125,7 +137,32 @@ function sendFilm() {
         return resp.json();
     })
     .then(function(errors) {
-        if(errors.description)
-            document.getElementById('description-error').innerText = errors.description;
-    });
-}
+        //Очищаем поля с ошибками
+        document.getElementById('title-error').textContent = '';
+        document.getElementById('title-ru-error').textContent = '';
+        document.getElementById('year-error').textContent = '';
+        document.getElementById('description-error').textContent = '';
+
+        if (errors) {
+        // Ошибка для английского названия
+        if (errors.title) {
+            document.getElementById('title-error').textContent = errors.title;
+        }
+        
+        // Ошибка для русского названия  
+        if (errors.title_ru) {
+            document.getElementById('title-ru-error').textContent = errors.title_ru;
+        }
+        
+        // Ошибка для года
+        if (errors.year) {
+            document.getElementById('year-error').textContent = errors.year;
+        }
+        
+        // Ошибка для описания
+        if (errors.description) {
+            document.getElementById('description-error').textContent = errors.description;
+        }
+        }    
+    })
+};
