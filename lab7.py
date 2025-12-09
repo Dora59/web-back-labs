@@ -1,194 +1,162 @@
 from flask import Blueprint, render_template, request, jsonify, abort
 from datetime import datetime 
+import psycopg2 
+from psycopg2.extras import RealDictCursor
 
 lab7 = Blueprint('lab7', __name__)
+
+def get_db():
+    conn = psycopg2.connect(
+        host='127.0.0.1',
+        database='darya_pyatina_knowledge_base',
+        user='darya_pyatina_knowledge_base',
+        password='777'
+    )
+    return conn
 
 @lab7.route('/lab7/')
 def main():
     return render_template('lab7/lab7.html')
 
-
-films = [
-    {
-        "title": "Spirited Away",
-        "title_ru": "Унесённые призраками",
-        "year": 2001,
-        "description": "Тихиро с мамой и папой переезжает в новый дом. Заблудившись по дороге,\
-            они оказываются в странном пустынном городе, где их ждет великолепный пир. Родители\
-            с жадностью набрасываются на еду и к ужасу девочки превращаются в свиней, став \
-            пленниками злой колдуньи Юбабы. Теперь, оказавшись одна среди волшебных существ \
-            и загадочных видений, Тихиро должна придумать, как избавить своих родителей\
-            от чар коварной старухи."
-    },
-     {
-        "title": "Shrek",
-        "title_ru": "Шрэк",
-        "year": 2001,
-        "description": "Жил да был в сказочном государстве большой зеленый великан по\
-            имени Шрэк. Жил он в гордом одиночестве в лесу, на болоте, которое считал своим.\
-            Но однажды злобный коротышка — лорд Фаркуад, правитель волшебного королевства,\
-            безжалостно согнал на Шрэково болото всех сказочных обитателей. И беспечной\
-            жизни зеленого великана пришел конец. Но лорд Фаркуад пообещал вернуть Шрэку\
-            болото, если великан добудет ему прекрасную принцессу Фиону, которая томится\
-            в неприступной башне, охраняемой огнедышащим драконом."
-    },
-     {
-        "title": "Дэдпул",
-        "title_ru": "Deadpool",
-        "year": 2016,
-        "description": "Уэйд Уилсон — наёмник. Будучи побочным продуктом программы\
-            вооружённых сил под названием «Оружие X», Уилсон приобрёл невероятную\
-            силу, проворство и способность к исцелению. Но страшной ценой: его\
-            клеточная структура постоянно меняется, а здравомыслие сомнительно.\
-            Всё, чего хочет Уилсон, — держаться на плаву в социальной выгребной\
-            яме. Но течение в ней слишком быстрое."
-    },
-     {
-        "title": "Cruella",
-        "title_ru": "Круэлла",
-        "year": 2021,
-        "description": "Великобритания, 1960-е годы. Эстелла была необычным ребёнком,\
-            и особенно трудно ей было мириться со всякого рода несправедливостью.\
-            Вылетев из очередной школы, она с мамой отправляется в Лондон. По дороге\
-            они заезжают в особняк известной модельерши по имени Баронесса, где в\
-            результате ужасного несчастного случая мама погибает. Добравшись до Лондона,\
-            Эстелла знакомится с двумя мальчишками — уличными мошенниками Джаспером и\
-            Хорасом. 10 лет спустя та же компания промышляет на улицах британской\
-            столицы мелким воровством, но Эстелла никак не может оставить мечту\
-            сделать карьеру в мире моды. Хитростью устроившись в фешенебельный\
-            универмаг, девушка привлекает внимание Баронессы, и та берёт её\
-            к себе в штат дизайнеров."
-    },
-     {
-        "title": "Ostwind",
-        "title_ru": "Восточный ветер",
-        "year": 2013,
-        "description": "Из-за плохой успеваемости родители отправляют 14-летнюю Мику\
-            в поместье к строгой бабушке. Поездка преподносит один сюрприз за другим:\
-            оказывается, бабушка, Мария Кальтенбах – знаменитая всадница в прошлом,\
-            которая теперь тренирует молодые таланты и разводит лошадей. Несмотря на\
-            то, что сама Мика ни разу в жизни не ездила верхом, да и не горит желанием\
-            научиться, один из обитателей конюшни - вороной жеребец по имени Оствинд\
-            неожиданно привлекает её внимание. Девушка легко находит с ним общий язык,\
-            даже не подозревая о том, что все вокруг считают коня диким и опасным.\
-            Так начинается их необыкновенная дружба."
-    },
-]
-
-
-#возврат информации о всех фильмах
 @lab7.route('/lab7/rest-api/films/', methods=['GET'])
 def get_films():
-    return films
+    conn = get_db()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM films ORDER BY id')
+    films = cur.fetchall()
+    cur.close()
+    conn.close()
+    return jsonify(films)
 
-
-#возврат информации о выбранном фильме
 @lab7.route('/lab7/rest-api/films/<int:id>', methods=['GET'])
 def get_film(id):
-    #проверка id на принадлежность корректному диапазону 
-    if id < 0 or id >= len(films):
-        # Если id выходит за пределы, возвращаем ошибку 404
+    conn = get_db()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM films WHERE id = %s', (id,))
+    film = cur.fetchone()
+    cur.close()
+    conn.close()
+    
+    if not film:
         abort(404, description=f"Фильм с ID {id} не найден")
-    return jsonify(films[id])
+    return jsonify(film)
 
-
-# Обработчик ошибки 404 для API
 @lab7.errorhandler(404)
 def not_found_error(error):
-    return jsonify({
-        "error": "Not Found",
-        "message": str(error.description)
-    }), 404
+    return jsonify({"error": "Not Found", "message": str(error.description)}), 404
 
-
-#удаление фильма
 @lab7.route('/lab7/rest-api/films/<int:id>', methods=['DELETE'])
 def del_film(id):
-    #проверка id на принадлежность корректному диапазону
-    if id < 0 or id >= len(films):
-        # Если id выходит за пределы, возвращаем ошибку 404
+    conn = get_db()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    
+    cur.execute('SELECT * FROM films WHERE id = %s', (id,))
+    film = cur.fetchone()
+    
+    if not film:
+        cur.close()
+        conn.close()
         abort(404, description=f"Фильм с ID {id} не найден")
-    del films[id]
+    
+    cur.execute('DELETE FROM films WHERE id = %s', (id,))
+    conn.commit()
+    cur.close()
+    conn.close()
     return '', 204
 
-
-#редактирование фильма 
 @lab7.route('/lab7/rest-api/films/<int:id>', methods=['PUT'])
 def put_film(id):
-    #проверка id на принадлежность корректному диапазону 
-    if id < 0 or id >= len(films):
-        # Если id выходит за пределы, возвращаем ошибку 404
-        abort(404, description=f"Фильм с ID {id} не найден")
-
     film = request.get_json()
-
-    #Проверка русского названия (обязательно)
+    
+    # Проверка русского названия
     if not film.get('title_ru') or film.get('title_ru', '').strip() == '':
-        return {'title_ru': 'Введите русское название'}, 400
+        return jsonify({'title_ru': 'Введите русское название'}), 400
     
-    #Проверка: если нет русского, то английское обязательно
-    if not film.get('title_ru') and (not film.get('title') or film.get('title', '').strip() == ''):
-        return {'title': 'Введите оригинальное название'}, 400
-    
-    #Проверка года
+    # Проверка года
     current_year = datetime.now().year
     try:
         year = int(film.get('year', 0))
         if year < 1895 or year > current_year:
-            return {'year': f'Год должен быть от 1895 до {current_year}'}, 400
+            return jsonify({'year': f'Год должен быть от 1895 до {current_year}'}), 400
     except (ValueError, TypeError):
-        return {'year': 'Введите корректный год'}, 400
+        return jsonify({'year': 'Введите корректный год'}), 400
 
-    #Проверка описания
+    # Проверка описания
     description = film.get('description', '')
     if not description or description.strip() == '':
-        return {'description': 'Заполните описание'}, 400
+        return jsonify({'description': 'Заполните описание'}), 400
     if len(description) > 2000:
-        return {'description': 'Описание не должно превышать 2000 символов'}, 400
+        return jsonify({'description': 'Описание не должно превышать 2000 символов'}), 400
     
-    # Если оригинальное название пустое, а русское есть
-    if film['title'] == '' and film['title_ru'] != '':
+    # Автозаполнение английского названия
+    if not film.get('title') and film.get('title_ru'):
         film['title'] = film['title_ru']
-        
-    films[id] = film 
-    return films[id]
+    
+    conn = get_db()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    
+    # Проверяем существование фильма
+    cur.execute('SELECT id FROM films WHERE id = %s', (id,))
+    if not cur.fetchone():
+        cur.close()
+        conn.close()
+        abort(404, description=f"Фильм с ID {id} не найден")
+    
+    # Обновляем
+    cur.execute('''
+        UPDATE films 
+        SET title = %s, title_ru = %s, year = %s, description = %s
+        WHERE id = %s
+        RETURNING *
+    ''', (film.get('title'), film['title_ru'], film['year'], film['description'], id))
+    
+    updated_film = cur.fetchone()
+    conn.commit()
+    cur.close()
+    conn.close()
+    
+    return jsonify(updated_film)
 
-
-
-#Добавление нового фильма
 @lab7.route('/lab7/rest-api/films/', methods=['POST'])
 def add_film():
     film = request.get_json()
-
-    errors = {}
-
-    #Проверка русского названия (обязательно)
+    
+    # Проверка русского названия
     if not film.get('title_ru') or film.get('title_ru', '').strip() == '':
-        return {'title_ru': 'Введите русское название'}, 400
+        return jsonify({'title_ru': 'Введите русское название'}), 400
     
-    #если нет русского, то английское обязательно
-    if not film.get('title_ru') and (not film.get('title') or film.get('title', '').strip() == ''):
-        return {'title': 'Введите оригинальное название'}, 400
-    
-    #Проверка года
+    # Проверка года
     current_year = datetime.now().year
     try:
         year = int(film.get('year', 0))
         if year < 1895 or year > current_year:
-            return {'year': f'Год должен быть от 1895 до {current_year}'}, 400
+            return jsonify({'year': f'Год должен быть от 1895 до {current_year}'}), 400
     except (ValueError, TypeError):
-        return {'year': 'Введите корректный год'}, 400
+        return jsonify({'year': 'Введите корректный год'}), 400
     
-    #Проверка описания 
+    # Проверка описания
     description = film.get('description', '')
     if not description or description.strip() == '':
-        return {'description': 'Заполните описание'}, 400
+        return jsonify({'description': 'Заполните описание'}), 400
     if len(description) > 2000:
-        return {'description': 'Описание не должно превышать 2000 символов'}, 400
+        return jsonify({'description': 'Описание не должно превышать 2000 символов'}), 400
     
-     #Автозаполнение английского названия если пустое
-    if film.get('title') == '' and film.get('title_ru') != '':
+    # Автозаполнение английского названия
+    if not film.get('title') and film.get('title_ru'):
         film['title'] = film['title_ru']
 
-    films.append(film)
-    return jsonify(len(films)-1)
+    conn = get_db()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    
+    cur.execute('''
+        INSERT INTO films (title, title_ru, year, description)
+        VALUES (%s, %s, %s, %s)
+        RETURNING *
+    ''', (film.get('title'), film['title_ru'], film['year'], film['description']))
+    
+    new_film = cur.fetchone()
+    conn.commit()
+    cur.close()
+    conn.close()
+    
+    return jsonify(new_film)
