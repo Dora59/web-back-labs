@@ -27,20 +27,6 @@ function fillFilmList() {
                 deleteFilm(i, films[i].title_ru);
             };
 
-            function fillFilmList() {
-
-            }
-            //функция удаления фильма
-            function deleteFilm(id, title) {
-                if(! confirm(`Вы точно хотите удалить данный фильм "${title}"?`))
-                    return;
-
-                fetch(`/lab7/rest-api/films/${id}`, {method: 'DELETE'})
-                    .then(function () {
-                        fillFilmList()
-                    });
-            }
-
             tdActions.append(editButton);
             tdActions.append(delButton);
 
@@ -52,4 +38,61 @@ function fillFilmList() {
             tbody.append(tr);
         }
     })
+}
+
+//функция удаления фильма
+function deleteFilm(id, title) {
+    if(! confirm(`Вы точно хотите удалить данный фильм "${title}"?`))
+        return;
+
+    fetch(`/lab7/rest-api/films/${id}`, {method: 'DELETE'})
+        .then(function () {
+            fillFilmList()
+        });
+}
+//функции показа и скрытия блока параметров
+function showModal() {
+    document.querySelector('div.modal').style.display = 'block';
+}
+function hideModal() {
+    document.querySelector('div.modal').style.display = 'none';
+}
+function cancel() {
+    hideModal();
+}
+function addFilm() {
+    showModal();
+}
+
+
+function addFilm() {
+    document.getElementById('id').value = '';
+    document.getElementById('title').value = '';
+    document.getElementById('title-ru').value = '';
+    document.getElementById('year').value = '';
+    document.getElementById('description').value = '';
+    showModal();
+}
+
+
+function sendFilm() {
+    const film = {
+        title: document.getElementById('title').value,
+        title_ru: document.getElementById('title-ru').value,
+        year: document.getElementById('year').value,
+        description: document.getElementById('description').value,
+    }
+
+    const url = `/lab7/rest-api/films/`;
+    const method = 'POST';
+
+    fetch(url, {
+        method: method,
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(film)
+    })
+    .then(function() {
+        fillFilmList();
+        hideModal();
+    });
 }
