@@ -92,10 +92,17 @@ def register():
 
 @lab8.route('/lab8/articles/')
 def article_list():
-    # Получаем все статьи из БД
-    all_articles = articles.query.all()
+    # Если пользователь авторизован
+    if current_user.is_authenticated:
+        # Показываем: все публичные + собственные статьи
+        articles_list = articles.query.filter(
+            (articles.is_public == True) | (articles.login_id == current_user.id)
+        ).all()
+    else:
+        # Если не авторизован - только публичные статьи
+        articles_list = articles.query.filter_by(is_public=True).all()
     
-    return render_template('lab8/articles.html', articles=all_articles)
+    return render_template('lab8/articles.html', articles=articles_list)
 
 
 @lab8.route('/lab8/logout')
@@ -107,18 +114,16 @@ def logout():
 
 @lab8.route('/lab8/create', methods=['GET', 'POST'])
 def create():
-    # Только для авторизованных
     if not current_user.is_authenticated:
         return redirect('/lab8/login')
     
     if request.method == 'GET':
         return render_template('lab8/create.html')
     
-    # Получаем данные из формы
     title = request.form.get('title')
     article_text = request.form.get('article_text')
+    is_public = request.form.get('is_public') == 'true'  # Проверяем чекбокс
     
-    # Проверяем не пустые поля
     if not title or title.strip() == '':
         return render_template('lab8/create.html',
                                error='Заголовок не может быть пустым')
@@ -131,37 +136,32 @@ def create():
     new_article = articles(
         title=title,
         article_text=article_text,
-        login_id=current_user.id,  
+        login_id=current_user.id,
+        is_public=is_public,  
         likes=0
     )
     
     db.session.add(new_article)
     db.session.commit()
     
-    # После создания перенаправляем на список статей
     return redirect('/lab8/articles')
 
 
 @lab8.route('/lab8/edit/<int:article_id>', methods=['GET', 'POST'])
 @login_required
 def edit_article(article_id):
-
-    # Находим статью
     article = articles.query.get_or_404(article_id)
     
-    # Проверяем, что пользователь - автор статьи
     if article.login_id != current_user.id:
-        return "У вас нет прав на редактирование этой статьи", 403
+        return "У вас нет прав на редактирование", 403
     
     if request.method == 'GET':
-        # Показываем форму с текущими данными
         return render_template('lab8/edit.html', article=article)
     
-    # Получаем новые данные из формы
     title = request.form.get('title')
     article_text = request.form.get('article_text')
+    is_public = request.form.get('is_public') == 'true'
     
-    # Проверяем не пустые поля
     if not title or title.strip() == '':
         return render_template('lab8/edit.html', 
                                article=article,
@@ -175,6 +175,7 @@ def edit_article(article_id):
     # Обновляем статью
     article.title = title
     article.article_text = article_text
+    article.is_public = is_public  # Обновляем статус публичности
     
     db.session.commit()
     

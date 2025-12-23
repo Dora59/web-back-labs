@@ -123,6 +123,7 @@
                 <div class="article-meta">
                     ID: {{ article.id }} | 
                     Автор ID: {{ article.login_id }} | 
+                    Статус: {% if article.is_public %}Публичная{% else %}Приватная{% endif %} 
                     Лайков: {{ article.likes or 0 }}
                     
                     <!-- КНОПКИ ДЛЯ АВТОРА -->

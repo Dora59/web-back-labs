@@ -109,6 +109,15 @@
             <label class="form-label">Текст статьи:</label>
             <textarea class="form-textarea" name="article_text" rows="10"></textarea>
         </div>
+
+        <div class="form-group">
+            <label style="display: flex; align-items: center; cursor: pointer;">
+                <input type="checkbox" name="is_public" value="true" 
+                    {% if article and article.is_public %}checked{% endif %}
+                    style="margin-right: 8px; width: auto;">
+                <span>Сделать публичной (видна всем)</span>
+            </label>
+        </div>
         
         <button class="submit-btn" type="submit">Создать статью</button>
         <a class="cancel-link" href="/lab8/articles">Отмена</a>
