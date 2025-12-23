@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, session
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import logout_user
 from db import db
 from db.models import users, articles
 from flask_login import login_user, login_required, current_user
@@ -8,7 +9,13 @@ lab8 = Blueprint('lab8', __name__)
 
 @lab8.route('/lab8/')
 def index():
-    return render_template('lab8/lab8.html', username='anonymous')
+    # Проверяем авторизацию через Flask-Login
+    if current_user.is_authenticated:
+        login = current_user.login
+    else:
+        login = None
+
+    return render_template('lab8/lab8.html', login=login)
 
 
 @lab8.route('/lab8/login', methods=['GET', 'POST'])
@@ -82,6 +89,13 @@ def register():
 @login_required
 def article_list():
     return "Список статей"
+
+
+@lab8.route('/lab8/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect('/lab8/')
 
 
 @lab8.route('/create')
