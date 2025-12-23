@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 8{% endblock %}
+
+{% block main %}
+    <h1>База знаний</h1>
+
+    <table style="width: 100%; border-collapse: separate; border-spacing: 5px; margin: 20px 0;">
+        <tr>
+            <td style="border: 1px solid #ccc; padding: 12px; text-align: center; background: #f155ca;">
+                <a href="/lab8/articles" style="text-decoration: none; font-weight: bold;">Список статей</a>
+            </td>
+            <td style="border: 1px solid #ccc; padding: 12px; text-align: center; background: #f155ca;">
+                <a href="/lab8/create" style="text-decoration: none; font-weight: bold;">Создать статью</a>
+            </td>
+            <td style="border: 1px solid #ccc; padding: 12px; text-align: center; background: #f155ca;">
+                <a href="/lab8/login" style="text-decoration: none; font-weight: bold;">Войти</a>
+            </td>
+            <td style="border: 1px solid #ccc; padding: 12px; text-align: center; background: #f155ca;">
+                <a href="/lab8/register" style="text-decoration: none; font-weight: bold;">Регистрация</a>
+            </td>
+            {% if login %}
+            {% endif %}
+            <td style="border: 1px solid #ccc; padding: 12px; text-align: center; background: #f155ca; color: #666;">
+                <strong>
+                    {% if login %}
+                        {{ login }}
+                    {% else %}
+                        Anonymous
+                    {% endif %}
+                </strong>
+            </td>
+        </tr>
+    </table>
+
+    <hr style="margin: 30px 0; border: none; border-top: 2px solid #ddd;">
+{% endblock %}
