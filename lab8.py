@@ -27,6 +27,7 @@ def login():
     
     login_form = request.form.get('login')
     password_form = request.form.get('password')
+    remember_me = request.form.get('remember') == 'true'
     
     print(f"Получены данные: логин='{login_form}', пароль='{password_form}'")  # Отладка
 
@@ -47,7 +48,8 @@ def login():
     # Проверка пользователя и пароля 
     if user:
         if check_password_hash(user.password, password_form):
-            login_user(user, remember = False)
+            #передаём remember=remember_me
+            login_user(user, remember=remember_me)
             return redirect('/lab8/')
     
     return render_template('lab8/login.html',
@@ -82,13 +84,18 @@ def register():
     new_user = users(login = login_form, password = password_hash)
     db.session.add(new_user)
     db.session.commit()
+
+    login_user(new_user)
+    
     return redirect('/lab8/')
 
 
 @lab8.route('/lab8/articles/')
-@login_required
 def article_list():
-    return "Список статей"
+    # Получаем все статьи из БД
+    all_articles = articles.query.all()
+    
+    return render_template('lab8/articles.html', articles=all_articles)
 
 
 @lab8.route('/lab8/logout')
@@ -98,6 +105,94 @@ def logout():
     return redirect('/lab8/')
 
 
-@lab8.route('/create')
+@lab8.route('/lab8/create', methods=['GET', 'POST'])
 def create():
-    return "Создание статьи"
+    # Только для авторизованных
+    if not current_user.is_authenticated:
+        return redirect('/lab8/login')
+    
+    if request.method == 'GET':
+        return render_template('lab8/create.html')
+    
+    # Получаем данные из формы
+    title = request.form.get('title')
+    article_text = request.form.get('article_text')
+    
+    # Проверяем не пустые поля
+    if not title or title.strip() == '':
+        return render_template('lab8/create.html',
+                               error='Заголовок не может быть пустым')
+    
+    if not article_text or article_text.strip() == '':
+        return render_template('lab8/create.html',
+                               error='Текст статьи не может быть пустым')
+    
+    # Создаем статью в БД
+    new_article = articles(
+        title=title,
+        article_text=article_text,
+        login_id=current_user.id,  
+        likes=0
+    )
+    
+    db.session.add(new_article)
+    db.session.commit()
+    
+    # После создания перенаправляем на список статей
+    return redirect('/lab8/articles')
+
+
+@lab8.route('/lab8/edit/<int:article_id>', methods=['GET', 'POST'])
+@login_required
+def edit_article(article_id):
+
+    # Находим статью
+    article = articles.query.get_or_404(article_id)
+    
+    # Проверяем, что пользователь - автор статьи
+    if article.login_id != current_user.id:
+        return "У вас нет прав на редактирование этой статьи", 403
+    
+    if request.method == 'GET':
+        # Показываем форму с текущими данными
+        return render_template('lab8/edit.html', article=article)
+    
+    # Получаем новые данные из формы
+    title = request.form.get('title')
+    article_text = request.form.get('article_text')
+    
+    # Проверяем не пустые поля
+    if not title or title.strip() == '':
+        return render_template('lab8/edit.html', 
+                               article=article,
+                               error='Заголовок не может быть пустым')
+    
+    if not article_text or article_text.strip() == '':
+        return render_template('lab8/edit.html', 
+                               article=article,
+                               error='Текст статьи не может быть пустым')
+    
+    # Обновляем статью
+    article.title = title
+    article.article_text = article_text
+    
+    db.session.commit()
+    
+    return redirect('/lab8/articles')
+
+
+@lab8.route('/lab8/delete/<int:article_id>', methods=['POST'])
+@login_required
+def delete_article(article_id):
+    # Находим статью
+    article = articles.query.get_or_404(article_id)
+    
+    # Проверяем, что пользователь - автор статьи
+    if article.login_id != current_user.id:
+        return "У вас нет прав на удаление этой статьи", 403
+    
+    # Удаляем статью
+    db.session.delete(article)
+    db.session.commit()
+    
+    return redirect('/lab8/articles')

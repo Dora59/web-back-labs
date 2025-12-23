@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 8{% endblock %}
+
+{% block main %}
+<style>
+    .articles-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .page-title {
+        color: #333;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+    
+    .articles-list {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+    }
+    
+    .article-card {
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        border: 2px solid #f155ca;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    
+    .article-title {
+        color: #333;
+        margin-bottom: 15px;
+        font-size: 22px;
+    }
+    
+    .article-content {
+        color: #555;
+        line-height: 1.6;
+        margin-bottom: 15px;
+        white-space: pre-line;
+    }
+    
+    .article-meta {
+        color: #777;
+        font-size: 14px;
+        border-top: 1px solid #eee;
+        padding-top: 15px;
+        margin-top: 15px;
+    }
+    
+    .create-btn {
+        display: inline-block;
+        padding: 12px 25px;
+        background: #f155ca;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: none;
+        margin-bottom: 30px;
+    }
+    
+    .no-articles {
+        text-align: center;
+        color: #777;
+        font-size: 18px;
+        padding: 50px;
+        border: 2px dashed #ddd;
+        border-radius: 8px;
+    }
+    
+    .edit-link {
+        color: #f155ca;
+        text-decoration: none;
+        margin-left: 10px;
+        font-weight: bold;
+    }
+    
+    .edit-link:hover {
+        text-decoration: underline;
+    }
+    
+    .delete-form {
+        display: inline;
+        margin-left: 10px;
+    }
+    
+    .delete-btn {
+        background: none;
+        border: none;
+        color: #ff4444;
+        cursor: pointer;
+        font-size: 14px;
+        padding: 0;
+        text-decoration: underline;
+        font-weight: bold;
+    }
+    
+    .delete-btn:hover {
+        color: #cc0000;
+        text-decoration: none;
+    }
+</style>
+
+<div class="articles-container">
+    <h1 class="page-title">Список статей</h1>
+    
+    {% if current_user.is_authenticated %}
+    <a href="/lab8/create" class="create-btn">Создать новую статью</a>
+    {% endif %}
+    
+    <div class="articles-list">
+        {% if articles %}
+            {% for article in articles %}
+            <div class="article-card">
+                <h2 class="article-title">{{ article.title }}</h2>
+                <div class="article-content">{{ article.article_text }}</div>
+                <div class="article-meta">
+                    ID: {{ article.id }} | 
+                    Автор ID: {{ article.login_id }} | 
+                    Лайков: {{ article.likes or 0 }}
+                    
+                    <!-- КНОПКИ ДЛЯ АВТОРА -->
+                    {% if current_user.is_authenticated and article.login_id == current_user.id %}
+                    | <a href="/lab8/edit/{{ article.id }}" class="edit-link">Редактировать</a>
+                    
+                    <form class="delete-form" action="/lab8/delete/{{ article.id }}" method="post">
+                        <button type="submit" class="delete-btn" 
+                                onclick="return confirm('Удалить статью «{{ article.title }}»?')">Удалить</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-articles">Статей пока нет. Будьте первым!</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

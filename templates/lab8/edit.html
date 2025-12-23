@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 8{% endblock %}
+
+{% block main %}
+<style>
+    .edit-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .edit-title {
+        color: #333;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+    
+    .error-box {
+        color: #ff0000;
+        background: #ffe6e6;
+        border: 2px solid #ff0000;
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+    }
+    
+    .edit-form {
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        border: 2px solid #f155ca;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #555;
+    }
+    
+    .form-input, .form-textarea {
+        width: 100%;
+        padding: 10px;
+        border: 2px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+    
+    .form-textarea {
+        min-height: 200px;
+        resize: vertical;
+    }
+    
+    .form-input:focus, .form-textarea:focus {
+        border-color: #f155ca;
+        outline: none;
+    }
+    
+    .submit-btn {
+        padding: 12px 25px;
+        background: #f155ca;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    
+    .submit-btn:hover {
+        background: #e045ba;
+    }
+    
+    .cancel-link {
+        margin-left: 15px;
+        color: #666;
+        text-decoration: none;
+    }
+    
+    .cancel-link:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="edit-container">
+    <h1 class="edit-title">Редактировать статью</h1>
+    
+    {% if error %}
+    <div class="error-box">
+        <strong>Ошибка:</strong> {{ error }}
+    </div>
+    {% endif %}
+    
+    <form class="edit-form" method="post">
+        <div class="form-group">
+            <label class="form-label">Заголовок:</label>
+            <input class="form-input" type="text" name="title" 
+                   value="{{ article.title }}">
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Текст статьи:</label>
+            <textarea class="form-textarea" name="article_text" rows="10">
+{{ article.article_text }}
+</textarea>
+        </div>
+        
+        <button class="submit-btn" type="submit">Сохранить изменения</button>
+        <a class="cancel-link" href="/lab8/articles">Отмена</a>
+    </form>
+</div>
+{% endblock %}
