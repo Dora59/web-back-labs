@@ -2,10 +2,292 @@
 
 {% block lab %}Лабораторная работа 9{% endblock %}
 
-{% block script %}{% endblock %}
-
 {% block main %}
-    <h1>Поздравления</h1>
+<style>
+    h1 {
+        text-align: center;
+        color: #d32f2f;
+        margin-bottom: 20px;
+    }
+    
+    .info-panel {
+        text-align: center;
+        margin: 15px 0;
+        padding: 10px;
+        background: #f0f8ff;
+        border-radius: 8px;
+    }
+    
+    .remaining-count {
+        color: #d32f2f;
+        font-weight: bold;
+    }
+    
+    .opened-count {
+        color: #2e7d32;
+        font-weight: bold;
+    }
+    
+    .santa-btn {
+        padding: 8px 16px;
+        background: #d32f2f;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+    
+    .login-link {
+        color: #4CAF50;
+        text-decoration: none;
+        margin-top: 10px;
+        display: inline-block;
+    }
+    
+    .gift-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 20px;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .gift-item {
+        text-align: center;
+    }
+    
+    .gift-unopened {
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+    
+    .gift-unopened:hover {
+        transform: scale(1.05);
+    }
+    
+    .gift-image {
+        width: 120px;
+        height: 120px;
+        object-fit: contain;
+    }
+    
+    .gift-number {
+        margin-top: 8px;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .gift-opened-box {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f5f5f5;
+        border-radius: 8px;
+    }
+    
+    .checkmark {
+        font-size: 28px;
+        color: #4CAF50;
+        font-weight: bold;
+    }
+    
+    .opened-text {
+        font-size: 14px;
+        font-weight: bold;
+        margin-top: 5px;
+        color: #666;
+    }
+    
+    .gift-number-opened {
+        margin-top: 8px;
+        color: #888;
+        font-size: 14px;
+    }
+    
+    .message-modal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        z-index: 1000;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        min-width: 300px;
+        text-align: center;
+    }
+    
+    .congrats-text {
+        color: #d32f2f;
+        margin-bottom: 15px;
+    }
+    
+    .gift-reveal-img {
+        width: 180px;
+        height: 180px;
+        border-radius: 8px;
+        margin: 15px 0;
+    }
+    
+    .close-btn {
+        padding: 10px 25px;
+        background: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+</style>
 
-    <hr style="margin: 30px 0; border: none; border-top: 2px solid #ddd;">
+<h1>Новогодние подарки</h1>
+
+<div class="info-panel">
+    <strong>Осталось: <span id="remaining" class="remaining-count">{{ total - opened|length }}</span></strong> | 
+    <strong>Открыто: <span id="opened-count" class="opened-count">{{ opened|length }}</span> из 3</strong>
+    
+    {% if is_auth %}
+    <div>
+        <button onclick="resetGifts()" class="santa-btn">
+            🎅 Дед Мороз (наполнить все подарки)
+        </button>
+    </div>
+    {% else %}
+    <div>
+        <a href="/lab8/login" class="login-link">
+            Войдите, чтобы получить доступ к Дед Морозу
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="gift-grid">
+    {% for i in range(10) %}
+        {% if i not in opened %}
+            <div class="gift-item gift-unopened" data-index="{{ i }}">
+                <img src="{{ url_for('static', filename='lab9/подарок' ~ (i+1) ~ '.png') }}" 
+                     class="gift-image">
+                <div class="gift-number">Подарок {{ i+1 }}</div>
+            </div>
+        {% else %}
+            <div class="gift-item">
+                <div class="gift-opened-box">
+                    <div>
+                        <div class="checkmark">✓</div>
+                        <div class="opened-text">Открыто</div>
+                    </div>
+                </div>
+                <div class="gift-number-opened">Подарок {{ i+1 }}</div>
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
+
+<div id="message" class="message-modal">
+    <h3 class="congrats-text" id="congrats-text"></h3>
+    <img id="gift-pic" src="" class="gift-reveal-img">
+    <button onclick="closeMessage()" class="close-btn">Закрыть</button>
+</div>
+
+<script>
+    // Обработчики кликов на подарки
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.gift-unopened').forEach(function(gift) {
+            gift.addEventListener('click', function() {
+                const boxIndex = this.getAttribute('data-index');
+                openBox(boxIndex);
+            });
+        });
+    });
+    
+    function openBox(boxIndex) {
+        console.log('Открываем подарок:', boxIndex);
+        
+        fetch('/lab9/open', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({box_index: parseInt(boxIndex)})
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Ответ от сервера:', data);
+            
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+            
+            // Обновляем счетчики
+            document.getElementById('remaining').textContent = data.remaining;
+            document.getElementById('opened-count').textContent = data.opened_count;
+            
+            // Показываем поздравление
+            document.getElementById('congrats-text').textContent = data.congrats;
+            document.getElementById('gift-pic').src = '/static/lab9/' + data.gift;
+            document.getElementById('message').style.display = 'block';
+            
+            // Меняем вид подарка
+            const giftElement = document.querySelector(`.gift-unopened[data-index="${boxIndex}"]`);
+            if (giftElement) {
+                const giftNum = parseInt(boxIndex) + 1;
+                
+                giftElement.outerHTML = `
+                    <div class="gift-item">
+                        <div class="gift-opened-box">
+                            <div>
+                                <div class="checkmark">✓</div>
+                                <div class="opened-text">Открыто</div>
+                            </div>
+                        </div>
+                        <div class="gift-number-opened">Подарок ${giftNum}</div>
+                    </div>
+                `;
+            }
+            
+            // Если открыли 3 коробки
+            if (data.opened_count >= 3) {
+                setTimeout(() => {
+                    alert('🎉 Вы открыли все 3 подарка! С Новым Годом!');
+                }, 500);
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            alert('Что-то пошло не так');
+        });
+    }
+    
+    function closeMessage() {
+        document.getElementById('message').style.display = 'none';
+    }
+    
+    function resetGifts() {
+        if (!confirm('🎅 Дед Мороз наполнит все подарки заново! Вы уверены?')) {
+            return;
+        }
+        
+        fetch('/lab9/reset', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'}
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                location.reload();
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            alert('Что-то пошло не так');
+        });
+    }
+</script>
 {% endblock %}
