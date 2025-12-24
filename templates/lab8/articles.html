@@ -182,7 +182,7 @@
                 <div class="article-meta">
                     ID: {{ article.id }} | 
                     Автор ID: {{ article.login_id }} | 
-                    Статус: {% if article.is_public %}📢 Публичная{% else %}🔒 Приватная{% endif %} | 
+                    Статус: {% if article.is_public %}Публичная{% else %}Приватная{% endif %} | 
                     Лайков: {{ article.likes or 0 }}
                     
                     {% if current_user.is_authenticated and article.login_id == current_user.id %}
