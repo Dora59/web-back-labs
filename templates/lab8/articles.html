@@ -105,10 +105,55 @@
         color: #cc0000;
         text-decoration: none;
     }
+    
+    /* Подсветка найденного текста */
+    mark {
+        background-color: #ffff00;
+        padding: 1px 3px;
+        border-radius: 3px;
+    }
+    
+    .search-info {
+        margin-top: 10px;
+        color: #777;
+        font-size: 14px;
+    }
+    
+    .reset-link {
+        margin-left: 15px;
+        color: #f155ca;
+        text-decoration: none;
+    }
+    
+    .reset-link:hover {
+        text-decoration: underline;
+    }
 </style>
 
 <div class="articles-container">
     <h1 class="page-title">Список статей</h1>
+    
+    <!-- ФОРМА ПОИСКА -->
+    <div style="margin-bottom: 30px; max-width: 500px;">
+        <form method="get" action="/lab8/articles/" style="display: flex;">
+            <input type="text" 
+                   name="q" 
+                   value="{{ search_query or '' }}"
+                   placeholder="Поиск по статьям..." 
+                   style="flex: 1; padding: 12px; border: 2px solid #f155ca; border-radius: 5px 0 0 5px; font-size: 16px;">
+            <button type="submit" 
+                    style="padding: 12px 20px; background: #f155ca; color: white; border: none; border-radius: 0 5px 5px 0; cursor: pointer; font-weight: bold;">
+                    Найти
+            </button>
+        </form>
+        
+        {% if search_query %}
+        <div class="search-info">
+            Поиск: "<strong>{{ search_query }}</strong>" | Найдено: {{ articles|length }} статей
+            <a href="/lab8/articles/" class="reset-link">✕ Сбросить поиск</a>
+        </div>
+        {% endif %}
+    </div>
     
     {% if current_user.is_authenticated %}
     <a href="/lab8/create" class="create-btn">Создать новую статью</a>
@@ -118,28 +163,51 @@
         {% if articles %}
             {% for article in articles %}
             <div class="article-card">
-                <h2 class="article-title">{{ article.title }}</h2>
-                <div class="article-content">{{ article.article_text }}</div>
+                <h2 class="article-title">
+                    {% if search_query %}
+                        {{ article.title|replace(search_query, '<mark>' + search_query + '</mark>')|safe }}
+                    {% else %}
+                        {{ article.title }}
+                    {% endif %}
+                </h2>
+                
+                <div class="article-content">
+                    {% if search_query %}
+                        {{ article.article_text|replace(search_query, '<mark>' + search_query + '</mark>')|safe }}
+                    {% else %}
+                        {{ article.article_text }}
+                    {% endif %}
+                </div>
+                
                 <div class="article-meta">
                     ID: {{ article.id }} | 
                     Автор ID: {{ article.login_id }} | 
-                    Статус: {% if article.is_public %}Публичная{% else %}Приватная{% endif %} 
+                    Статус: {% if article.is_public %}📢 Публичная{% else %}🔒 Приватная{% endif %} | 
                     Лайков: {{ article.likes or 0 }}
                     
-                    <!-- КНОПКИ ДЛЯ АВТОРА -->
                     {% if current_user.is_authenticated and article.login_id == current_user.id %}
-                    | <a href="/lab8/edit/{{ article.id }}" class="edit-link">Редактировать</a>
+                    | <a href="/lab8/edit/{{ article.id }}" class="edit-link">
+                        Редактировать
+                      </a>
                     
                     <form class="delete-form" action="/lab8/delete/{{ article.id }}" method="post">
                         <button type="submit" class="delete-btn" 
-                                onclick="return confirm('Удалить статью «{{ article.title }}»?')">Удалить</button>
+                                onclick="return confirm('Удалить статью «{{ article.title }}»?')">
+                            Удалить
+                        </button>
                     </form>
                     {% endif %}
                 </div>
             </div>
             {% endfor %}
         {% else %}
-            <div class="no-articles">Статей пока нет. Будьте первым!</div>
+            <div class="no-articles">
+                {% if search_query %}
+                    По запросу "{{ search_query }}" ничего не найдено
+                {% else %}
+                    Статей пока нет. Будьте первым!
+                {% endif %}
+            </div>
         {% endif %}
     </div>
 </div>

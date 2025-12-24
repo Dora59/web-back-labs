@@ -92,17 +92,33 @@ def register():
 
 @lab8.route('/lab8/articles/')
 def article_list():
-    # Если пользователь авторизован
-    if current_user.is_authenticated:
-        # Показываем: все публичные + собственные статьи
-        articles_list = articles.query.filter(
-            (articles.is_public == True) | (articles.login_id == current_user.id)
-        ).all()
-    else:
-        # Если не авторизован - только публичные статьи
-        articles_list = articles.query.filter_by(is_public=True).all()
+    search_query = request.args.get('q', '').strip()
     
-    return render_template('lab8/articles.html', articles=articles_list)
+    # Базовый запрос
+    if current_user.is_authenticated:
+        # Авторизованные: публичные + свои
+        query = articles.query.filter(
+            (articles.is_public == True) | (articles.login_id == current_user.id)
+        )
+    else:
+        # Неавторизованные: только публичные
+        query = articles.query.filter_by(is_public=True)
+    
+    # Если есть поисковый запрос
+    if search_query:
+        # Регистронезависимый поиск по заголовку ИЛИ тексту
+        search_filter = db.or_(
+            articles.title.ilike(f'%{search_query}%'),
+            articles.article_text.ilike(f'%{search_query}%')
+        )
+        query = query.filter(search_filter)
+    
+    # Получаем результаты
+    articles_list = query.order_by(articles.id.desc()).all()
+    
+    return render_template('lab8/articles.html', 
+                          articles=articles_list,
+                          search_query=search_query)
 
 
 @lab8.route('/lab8/logout')
