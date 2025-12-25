@@ -191,7 +191,7 @@ def edit_article(article_id):
     # Обновляем статью
     article.title = title
     article.article_text = article_text
-    article.is_public = is_public  # Обновляем статус публичности
+    article.is_public = is_public  
     
     db.session.commit()
     

@@ -23,8 +23,8 @@ def init_session():
         # СЕТКА 5x2 (5 столбцов, 2 строки)
         for row in range(2):
             for col in range(5):
-                x = 10 + col * 20  # 10%, 30%, 50%, 70%, 90%
-                y = 15 + row * 35  # 15%, 50%
+                x = 10 + col * 20  
+                y = 15 + row * 35  
                 positions.append((x, y))
         session['positions'] = positions
     
@@ -67,7 +67,7 @@ def open_gift():
     
     # Добавляем в открытые
     session['opened'].append(box_index)
-    session.modified = True  # Важно для Flask session!
+    session.modified = True  
     
     # Получаем поздравление и картинку
     congrats = session['congrats'][box_index]
@@ -82,7 +82,7 @@ def open_gift():
     })
 
 @lab9.route('/lab9/reset', methods=['POST'])
-@login_required  # Только для авторизованных
+@login_required  
 def reset_gifts():
     # Очищаем открытые подарки
     session['opened'] = []
